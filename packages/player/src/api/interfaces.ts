@@ -53,10 +53,12 @@ export type { AudioQuality } from '../internal/types';
  * Contains information about a TIDAL media product.
  */
 export type MediaProduct = {
+  /** Optional extra attributes of the media product. Passed through to corresponding PlayLog event */
+  extras?: Record<string, unknown>;
   /** The id of the product to play */
   productId: string;
   /** The type of the product to play */
-  productType: 'demo' | 'track' | 'video';
+  productType: 'track' | 'video';
   /** Optional client-set reference id to handle duplicated in a play queue implementation */
   referenceId?: string;
   /** The id of the source to play, passed along for event tracking */

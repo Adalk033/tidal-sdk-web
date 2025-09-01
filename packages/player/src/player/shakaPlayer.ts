@@ -1,4 +1,6 @@
 import shaka from 'shaka-player';
+// If you want to use the debug version, switch to the line below:
+// import shaka from 'shaka-player/dist/shaka-player.compiled.debug.js';
 
 import { activeDeviceChanged as activeDeviceChangedEvent } from '../api/event/active-device-changed';
 import type { EndedEvent } from '../api/event/ended';
@@ -282,12 +284,9 @@ export default class ShakaPlayer extends BasePlayer {
         drm: {
           advanced: {
             'com.widevine.alpha': {
-              audioRobustness: 'SW_SECURE_CRYPTO',
-              // VIZIO does not support inline cert. Will be fetched.
-              serverCertificate:
-                'VIZIO' in window ? undefined : serverCertificateWidevine,
-
-              videoRobustness: 'SW_SECURE_CRYPTO',
+              audioRobustness: ['SW_SECURE_CRYPTO'],
+              serverCertificate: serverCertificateWidevine,
+              videoRobustness: ['SW_SECURE_CRYPTO'],
             },
           },
           servers: {
@@ -336,35 +335,23 @@ export default class ShakaPlayer extends BasePlayer {
   }
 
   /**
-   * Playback of media product type demo needs to be done with
-   * useNativeHlsForFairPlay and preferNativeHls set to false.
+   * Playback of media product type demo needed to be done with
+   * useNativeHlsForFairPlay and preferNativeHls set to false, but
+   * we don't support `demo` anymore.
    */
-  async #configureHlsForPlayback(
-    instance: shaka.Player | undefined,
-    mediaProduct: MediaProduct,
-  ) {
+  async #configureHlsForPlayback(instance: shaka.Player | undefined) {
     const isFairPlaySupported =
       await shaka.util.FairPlayUtils.isFairPlaySupported();
 
     if (isFairPlaySupported && instance) {
-      if (
-        instance.getConfiguration().streaming.preferNativeHls !==
-        (mediaProduct.productType !== 'demo')
-      ) {
-        instance.configure(
-          'streaming.preferNativeHls',
-          mediaProduct.productType !== 'demo',
-        );
+      if (instance.getConfiguration().streaming.preferNativeHls !== true) {
+        instance.configure('streaming.preferNativeHls', true);
       }
 
       if (
-        instance.getConfiguration().streaming.useNativeHlsForFairPlay !==
-        (mediaProduct.productType !== 'demo')
+        instance.getConfiguration().streaming.useNativeHlsForFairPlay !== true
       ) {
-        instance.configure(
-          'streaming.useNativeHlsForFairPlay',
-          mediaProduct.productType !== 'demo',
-        );
+        instance.configure('streaming.useNativeHlsForFairPlay', true);
       }
 
       // await instance.release();
@@ -490,7 +477,9 @@ export default class ShakaPlayer extends BasePlayer {
           const { token } =
             await credentialsProviderStore.credentialsProvider.getCredentials();
 
-          request.headers.authorization = `Bearer ${token}`;
+          if (token) {
+            request.headers.authorization = `Bearer ${token}`;
+          }
         }
       });
 
@@ -528,22 +517,20 @@ export default class ShakaPlayer extends BasePlayer {
               streamingSessionId,
             });
 
-            StreamingMetrics.commit({
-              events: [
-                StreamingMetrics.drmLicenseFetch({
-                  endReason: 'COMPLETE',
-                  endTimestamp: trueTime.timestamp(
-                    'streaming_metrics:drm_license_fetch:endTimestamp',
-                  ),
-                  errorCode: null,
-                  errorMessage: null,
-                  startTimestamp: trueTime.timestamp(
-                    'streaming_metrics:drm_license_fetch:startTimestamp',
-                  ),
-                  streamingSessionId,
-                }),
-              ],
-            }).catch(console.error);
+            StreamingMetrics.commit([
+              StreamingMetrics.drmLicenseFetch({
+                endReason: 'COMPLETE',
+                endTimestamp: trueTime.timestamp(
+                  'streaming_metrics:drm_license_fetch:endTimestamp',
+                ),
+                errorCode: null,
+                errorMessage: null,
+                startTimestamp: trueTime.timestamp(
+                  'streaming_metrics:drm_license_fetch:startTimestamp',
+                ),
+                streamingSessionId,
+              }),
+            ]).catch(console.error);
 
             performance.clearMarks(
               'streaming_metrics:drm_license_fetch:endTimestamp',
@@ -572,22 +559,20 @@ export default class ShakaPlayer extends BasePlayer {
     switch (error.code) {
       case shaka.util.Error.Code.LICENSE_REQUEST_FAILED: // 6007
         if (this.currentStreamingSessionId) {
-          StreamingMetrics.commit({
-            events: [
-              StreamingMetrics.drmLicenseFetch({
-                endReason: 'ERROR',
-                endTimestamp: trueTime.timestamp(
-                  'streaming_metrics:drm_license_fetch:endTimestamp',
-                ),
-                errorCode,
-                errorMessage: JSON.stringify(error),
-                startTimestamp: trueTime.timestamp(
-                  'streaming_metrics:drm_license_fetch:startTimestamp',
-                ),
-                streamingSessionId: this.currentStreamingSessionId,
-              }),
-            ],
-          }).catch(console.error);
+          StreamingMetrics.commit([
+            StreamingMetrics.drmLicenseFetch({
+              endReason: 'ERROR',
+              endTimestamp: trueTime.timestamp(
+                'streaming_metrics:drm_license_fetch:endTimestamp',
+              ),
+              errorCode,
+              errorMessage: JSON.stringify(error),
+              startTimestamp: trueTime.timestamp(
+                'streaming_metrics:drm_license_fetch:startTimestamp',
+              ),
+              streamingSessionId: this.currentStreamingSessionId,
+            }),
+          ]).catch(console.error);
         }
         break;
       case shaka.util.Error.Code.LOAD_INTERRUPTED: // 7000
@@ -844,10 +829,7 @@ export default class ShakaPlayer extends BasePlayer {
     await this.reset();
     this.#isReset = false;
 
-    await this.#configureHlsForPlayback(
-      this.shakaInstance,
-      payload.mediaProduct,
-    );
+    await this.#configureHlsForPlayback(this.shakaInstance);
 
     await ensureVideoElementsMounted();
 

@@ -1,6 +1,6 @@
 {
   "name": "@tidal-music/tidal-sdk-web",
-  "packageManager": "pnpm@10.6.5",
+  "packageManager": "pnpm@10.15.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,22 +10,22 @@
     "lint": "pnpm -r lint",
     "lint:ci": "pnpm -r lint:ci",
     "lint:fix": "pnpm -r lint:fix",
-    "test": "pnpm -r test -- --run",
+    "test": "pnpm -r test --run",
     "test:coverage": "pnpm -r test:coverage",
     "typecheck": "pnpm -r typecheck",
     "generateTypes": "pnpm -r generateTypes"
   },
   "devDependencies": {
-    "eslint": "9.23.0",
+    "eslint": "9.34.0",
     "eslint-config-tidal": "4.0.0",
     "eslint-plugin-disable-autofix": "5.0.1",
-    "eslint-plugin-jsdoc": "50.6.9",
-    "typedoc": "0.28.1",
-    "vitest": "3.0.9"
+    "eslint-plugin-jsdoc": "54.1.1",
+    "typedoc": "0.28.12",
+    "vitest": "3.2.4"
   },
   "pnpm": {
     "patchedDependencies": {
-      "shaka-player@4.11.2": "patches/shaka-player@4.11.2.patch"
+      "shaka-player": "patches/shaka-player.patch"
     },
     "ignoredBuiltDependencies": [
       "esbuild"

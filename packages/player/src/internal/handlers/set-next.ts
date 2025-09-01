@@ -1,6 +1,7 @@
 import type { MediaProduct } from '../../api/interfaces';
 import * as Config from '../../config';
 import { generateGUID } from '../../internal/helpers/generate-guid';
+import { getIsPostPaywall } from '../../internal/helpers/get-is-post-paywall';
 import { parseManifest } from '../../internal/helpers/manifest-parser';
 import { fetchPlaybackInfo } from '../../internal/helpers/playback-info-resolver';
 import type { PlaybackInfo } from '../../internal/helpers/playback-info-resolver';
@@ -14,7 +15,7 @@ import { playerState } from '../../player/state';
 import * as PlayLog from '../event-tracking/play-log/index';
 import * as StreamingMetrics from '../event-tracking/streaming-metrics/index';
 import { streamingSessionStore } from '../helpers/streaming-session-store';
-import { credentialsProviderStore } from '../index';
+import { credentialsProviderStore, eventSenderStore } from '../index';
 import { trueTime } from '../true-time';
 
 let controller: AbortController;
@@ -32,6 +33,10 @@ async function _setNext(
   mediaProduct?: MediaProduct,
   sessionTags: Array<string> = [],
 ) {
+  if (!eventSenderStore.hasEventSender()) {
+    throw new Error('Playback not allowed without an event sender.');
+  }
+
   cancelQueuedOnendedHandler();
 
   // If next handler is called with undefined/null as media product, we treat that as an unset.
@@ -58,16 +63,14 @@ async function _setNext(
 
   const startTimestamp = trueTime.now();
 
-  StreamingMetrics.commit({
-    events: [
-      StreamingMetrics.streamingSessionStart({
-        sessionTags,
-        startReason: 'IMPLICIT',
-        streamingSessionId,
-        timestamp: startTimestamp,
-      }),
-    ],
-  }).catch(console.error);
+  StreamingMetrics.commit([
+    StreamingMetrics.streamingSessionStart({
+      sessionTags,
+      startReason: 'IMPLICIT',
+      streamingSessionId,
+      timestamp: startTimestamp,
+    }),
+  ]).catch(console.error);
 
   const { clientId, token } =
     await credentialsProviderStore.credentialsProvider.getCredentials();
@@ -126,8 +129,11 @@ async function _setNext(
       'videoId' in playbackInfo ? playbackInfo.videoId : playbackInfo.trackId,
     ),
     actualQuality: streamInfo.quality,
-    isPostPaywall: playbackInfo.assetPresentation === 'FULL',
-    // Euw...
+    extras: mediaProduct.extras,
+    isPostPaywall: getIsPostPaywall(
+      playbackInfo.assetPresentation,
+      mediaProduct,
+    ),
     playbackSessionId: streamingSessionId,
     productType: PlayLog.mapProductTypeToPlayLogProductType(
       mediaProduct.productType,
@@ -140,12 +146,10 @@ async function _setNext(
     streamingSessionId,
   }).catch(console.error);
 
-  StreamingMetrics.commit({
-    events: [
-      StreamingMetrics.streamingSessionStart({ streamingSessionId }),
-      StreamingMetrics.playbackInfoFetch({ streamingSessionId }),
-    ],
-  }).catch(console.error);
+  StreamingMetrics.commit([
+    StreamingMetrics.streamingSessionStart({ streamingSessionId }),
+    StreamingMetrics.playbackInfoFetch({ streamingSessionId }),
+  ]).catch(console.error);
 
   const { activePlayer } = playerState;
   const samePlayer =

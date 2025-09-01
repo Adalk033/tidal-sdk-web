@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2025-08-14
+
+### Changed
+
+- Remove support for 'demo' product type (#350)
+- Update getOutputDevices function type to return an array of OutputDevice (#351)
+
+## [0.10.2] - 2025-08-13
+
+### Fixed
+
+- Version bump only, as last version failed to release
+
+## [0.10.0] - 2025-08-13
+
+### Changed
+
+- Update to latest Shaka Player (4.15.9)
+
+## [0.9.1] - 2025-05-19
+
+### Changed
+
+- Update to latest Shaka Player again
+
+## [0.9.0] - 2025-05-09
+
+### Changed
+
+- Update to latest Shaka Player (#306)
+
+## [0.8.0] - 2025-04-25
+
+### Changed
+
+- Switch event tracking implementation (#91)
+
+## [0.7.1] - 2025-04-22
+
+### Fixed
+
+- Allow using `setEventUrl` again (#299)
+
+## [0.7.0] - 2025-04-15
+
+### Changed
+
+- Add `extras` to playback events (#295)
+
+## [0.6.2] - 2025-04-11
+
+### Changed
+
+- Add `play_log_open` events (#285)
+
+## [0.6.1] - 2025-04-11
+
+### Fixed
+
+- Avoid setting invalid Bearer token header (#289)
+
 ## [0.6.0] - 2025-03-07
 
 ### Fixed

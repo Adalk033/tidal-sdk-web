@@ -4,6 +4,114 @@
  */
 
 export interface paths {
+    "/albums": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple albums.
+         * @description Retrieves multiple albums by available filters, or without if applicable.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: artists, coverArt, genres, items, owners, providers, similarAlbums
+                     * @example artists
+                     */
+                    include?: string[];
+                    /**
+                     * @description User id
+                     * @example 123456
+                     */
+                    "filter[r.owners.id]"?: string[];
+                    /**
+                     * @description Album id
+                     * @example 251380836
+                     */
+                    "filter[id]"?: string[];
+                    /**
+                     * @description Barcode Id
+                     * @example 196589525444
+                     */
+                    "filter[barcodeId]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        /**
+         * Create single album.
+         * @description Creates a new album.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["AlbumCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Albums_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/albums/{id}": {
         parameters: {
             query?: never;
@@ -24,7 +132,7 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: artists, items, providers, similarAlbums
+                     * @description Allows the client to customize which related resources should be returned. Available options: artists, coverArt, genres, items, owners, providers, similarAlbums
                      * @example artists
                      */
                     include?: string[];
@@ -41,261 +149,88 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Albums_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Albums_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/albums": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
         /**
-         * Get multiple albums.
-         * @description Retrieves multiple albums by available filters, or without if applicable.
+         * Delete single album.
+         * @description Deletes existing album.
          */
-        get: {
+        delete: {
             parameters: {
-                query: {
+                query?: never;
+                header?: never;
+                path: {
                     /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: artists, items, providers, similarAlbums
-                     * @example artists
-                     */
-                    include?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on barcodeId attribute value
-                     * @example 196589525444
-                     */
-                    "filter[barcodeId]"?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
+                     * @description Album id
                      * @example 251380836
                      */
-                    "filter[id]"?: string[];
+                    id: string;
                 };
-                header?: never;
-                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update single album.
+         * @description Updates existing album.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Album id
+                     * @example 251380836
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["AlbumUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
         trace?: never;
     };
     "/albums/{id}/relationships/artists": {
@@ -317,13 +252,13 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: artists
                      * @example artists
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -337,104 +272,183 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/albums/{id}/relationships/coverArt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get coverArt relationship ("to-many").
+         * @description Retrieves coverArt relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: coverArt
+                     * @example coverArt
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Album id
+                     * @example 251380836
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update coverArt relationship ("to-many").
+         * @description Updates coverArt relationship.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Album id
+                     * @example 251380836
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["AlbumCoverArtRelationshipUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        trace?: never;
+    };
+    "/albums/{id}/relationships/genres": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get genres relationship ("to-many").
+         * @description Retrieves genres relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: genres
+                     * @example genres
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Album id
+                     * @example 251380836
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -464,9 +478,69 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: items
                      * @example items
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Album id
+                     * @example 251380836
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Albums_Items_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/albums/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
                      */
                     include?: string[];
                     /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
@@ -484,104 +558,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -631,104 +623,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -758,13 +668,13 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: similarAlbums
                      * @example similarAlbums
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -778,104 +688,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Albums_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -886,7 +714,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/artistRoles/{id}": {
+    "/artistBiographies": {
         parameters: {
             query?: never;
             header?: never;
@@ -894,17 +722,90 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get single artistRole.
-         * @description Retrieves single artistRole by id.
+         * Get multiple artistBiographies.
+         * @description Retrieves multiple artistBiographies by available filters, or without if applicable.
          */
         get: {
             parameters: {
-                query?: never;
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    "filter[id]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["ArtistBiographies_Multi_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artistBiographies/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single artistBiographie.
+         * @description Retrieves single artistBiographie by id.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                };
                 header?: never;
                 path: {
                     /**
-                     * @description Artist role id
-                     * @example 1
+                     * @description Artist id
+                     * @example 1566
                      */
                     id: string;
                 };
@@ -912,104 +813,463 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["ArtistRoles_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistBiographies_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update single artistBiographie.
+         * @description Updates existing artistBiographie.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["ArtistBiographyUpdateBody"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        trace?: never;
+    };
+    "/artistBiographies/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistBiographies_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artistClaims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create single artistClaim.
+         * @description Creates a new artistClaim.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["ArtistClaimsCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistClaims_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artistClaims/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single artistClaim.
+         * @description Retrieves single artistClaim by id.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: acceptedArtists, owners, recommendedArtists
+                     * @example acceptedArtists
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist claim id
+                     * @example f47ac10b-58cc-4372-a567-0e02b2c3d479
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistClaims_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update single artistClaim.
+         * @description Updates existing artistClaim.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist claim id
+                     * @example f47ac10b-58cc-4372-a567-0e02b2c3d479
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["ArtistClaimsUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        trace?: never;
+    };
+    "/artistClaims/{id}/relationships/acceptedArtists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get acceptedArtists relationship ("to-many").
+         * @description Retrieves acceptedArtists relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: acceptedArtists
+                     * @example acceptedArtists
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist claim id
+                     * @example f47ac10b-58cc-4372-a567-0e02b2c3d479
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistClaims_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update acceptedArtists relationship ("to-many").
+         * @description Updates acceptedArtists relationship.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist claim id
+                     * @example f47ac10b-58cc-4372-a567-0e02b2c3d479
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["ArtistClaimAcceptedArtistsRelationshipUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        trace?: never;
+    };
+    "/artistClaims/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist claim id
+                     * @example f47ac10b-58cc-4372-a567-0e02b2c3d479
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistClaims_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artistClaims/{id}/relationships/recommendedArtists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get recommendedArtists relationship ("to-many").
+         * @description Retrieves recommendedArtists relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: recommendedArtists
+                     * @example recommendedArtists
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                 };
-                /** @description Unavailable For Legal Reasons */
-                451: {
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist claim id
+                     * @example f47ac10b-58cc-4372-a567-0e02b2c3d479
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistClaims_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -1046,108 +1306,179 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["ArtistRoles_Multi_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["ArtistRoles_Multi_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artistRoles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single artistRole.
+         * @description Retrieves single artistRole by id.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist role id
+                     * @example 1
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["ArtistRoles_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple artists.
+         * @description Retrieves multiple artists by available filters, or without if applicable.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: albums, biography, owners, profileArt, radio, roles, similarArtists, trackProviders, tracks, videos
+                     * @example albums
+                     */
+                    include?: string[];
+                    /**
+                     * @description Artist handle
+                     * @example jayz
+                     */
+                    "filter[handle]"?: string[];
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    "filter[id]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        /**
+         * Create single artist.
+         * @description Creates a new artist.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["ArtistCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artists_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -1174,7 +1505,7 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, radio, roles, similarArtists, trackProviders, tracks, videos
+                     * @description Allows the client to customize which related resources should be returned. Available options: albums, biography, owners, profileArt, radio, roles, similarArtists, trackProviders, tracks, videos
                      * @example albums
                      */
                     include?: string[];
@@ -1191,104 +1522,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -1319,247 +1568,15 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
-        trace?: never;
-    };
-    "/artists": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get multiple artists.
-         * @description Retrieves multiple artists by available filters, or without if applicable.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, radio, roles, similarArtists, trackProviders, tracks, videos
-                     * @example albums
-                     */
-                    include?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on handle attribute value
-                     * @example jayz
-                     */
-                    "filter[handle]"?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 1566
-                     */
-                    "filter[id]"?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/artists/{id}/relationships/albums": {
@@ -1581,9 +1598,132 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: albums
                      * @example albums
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artists/{id}/relationships/biography": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get biography relationship ("to-one").
+         * @description Retrieves biography relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: biography
+                     * @example biography
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artists_Single_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artists/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
                      */
                     include?: string[];
                     /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
@@ -1601,104 +1741,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -1707,6 +1765,102 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/artists/{id}/relationships/profileArt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get profileArt relationship ("to-many").
+         * @description Retrieves profileArt relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: profileArt
+                     * @example profileArt
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update profileArt relationship ("to-many").
+         * @description Updates profileArt relationship.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Artist id
+                     * @example 1566
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["ArtistProfileArtRelationshipUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
         trace?: never;
     };
     "/artists/{id}/relationships/radio": {
@@ -1728,13 +1882,13 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: radio
                      * @example radio
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -1748,104 +1902,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -1890,104 +1962,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -2017,13 +2007,13 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: similarArtists
                      * @example similarArtists
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -2037,104 +2027,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -2159,13 +2067,13 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: trackProviders
                      * @example trackProviders
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -2179,104 +2087,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_TrackProviders_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -2311,13 +2137,13 @@ export interface paths {
                      * @example FINGERPRINT
                      */
                     collapseBy: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: tracks
                      * @example tracks
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -2331,104 +2157,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -2458,13 +2202,13 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: videos
                      * @example videos
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -2478,108 +2222,727 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Artists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artworks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple artworks.
+         * @description Retrieves multiple artworks by available filters, or without if applicable.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /**
+                     * @description Artwork id
+                     * @example a468bee88def
+                     */
+                    "filter[id]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artworks_Multi_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        /**
+         * Create single artwork.
+         * @description Creates a new artwork.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["ArtworkCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artworks_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artworks/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single artwork.
+         * @description Retrieves single artwork by id.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artwork id
+                     * @example a468bee88def
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artworks_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artworks/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Artwork id
+                     * @example a468bee88def
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Artworks_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/genres": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple genres.
+         * @description Retrieves multiple genres by available filters, or without if applicable.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                    /**
+                     * @description Allows filtering by genre id(s). USER_SELECTABLE is special value used to return specific genres which users can select from
+                     * @example '1,2,3' or 'USER_SELECTABLE'
+                     */
+                    "filter[id]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Genres_Multi_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/genres/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single genre.
+         * @description Retrieves single genre by id.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Genre id
+                     * @example 123
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Genres_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/lyrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create single lyric.
+         * @description Creates a new lyric.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["LyricsCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Lyrics_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/lyrics/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single lyric.
+         * @description Retrieves single lyric by id.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners, track
+                     * @example owners
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Lyrics Id
+                     * @example nejMcAhh5N8S3EQ4LaqysVdI0cZZ
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Lyrics_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update single lyric.
+         * @description Updates existing lyric.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Lyrics Id
+                     * @example nejMcAhh5N8S3EQ4LaqysVdI0cZZ
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["LyricsUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        trace?: never;
+    };
+    "/lyrics/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Lyrics Id
+                     * @example nejMcAhh5N8S3EQ4LaqysVdI0cZZ
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Lyrics_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/lyrics/{id}/relationships/track": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get track relationship ("to-one").
+         * @description Retrieves track relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: track
+                     * @example track
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Lyrics Id
+                     * @example nejMcAhh5N8S3EQ4LaqysVdI0cZZ
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Lyrics_Single_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/playlists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple playlists.
+         * @description Retrieves multiple playlists by available filters, or without if applicable.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: coverArt, items, owners
+                     * @example coverArt
+                     */
+                    include?: string[];
+                    /**
+                     * @description User id
+                     * @example 123456
+                     */
+                    "filter[r.owners.id]"?: string[];
+                    /**
+                     * @description Playlist id
+                     * @example 550e8400-e29b-41d4-a716-446655440000
+                     */
+                    "filter[id]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Playlists_Multi_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        /**
+         * Create single playlist.
+         * @description Creates a new playlist.
+         */
+        post: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["PlaylistCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Playlists_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -2606,13 +2969,8 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: items, owners
-                     * @example items
+                     * @description Allows the client to customize which related resources should be returned. Available options: coverArt, items, owners
+                     * @example coverArt
                      */
                     include?: string[];
                 };
@@ -2628,104 +2986,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Playlists_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Playlists_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -2749,96 +3025,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         options?: never;
@@ -2849,7 +3042,13 @@ export interface paths {
          */
         patch: {
             parameters: {
-                query?: never;
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                };
                 header?: never;
                 path: {
                     /**
@@ -2866,101 +3065,18 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         trace?: never;
     };
-    "/playlists": {
+    "/playlists/{id}/relationships/coverArt": {
         parameters: {
             query?: never;
             header?: never;
@@ -2968,8 +3084,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get multiple playlists.
-         * @description Retrieves multiple playlists by available filters, or without if applicable.
+         * Get coverArt relationship ("to-many").
+         * @description Retrieves coverArt relationship.
          */
         get: {
             parameters: {
@@ -2980,396 +3096,41 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: items, owners
-                     * @example items
+                     * @description Allows the client to customize which related resources should be returned. Available options: coverArt
+                     * @example coverArt
                      */
                     include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
                     /**
                      * @description Playlist id
                      * @example 550e8400-e29b-41d4-a716-446655440000
                      */
-                    "filter[id]"?: string[];
+                    id: string;
                 };
-                header?: never;
-                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Playlists_Multi_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Playlists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /**
-         * Create single playlist.
-         * @description Creates a new playlist.
-         */
-        post: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/vnd.api+json": components["schemas"]["PlaylistCreateOperation_Payload"];
-                };
-            };
-            responses: {
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Playlists_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/playlists/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current user's playlist(s).
-         * @description Retrieves current user's playlist(s).
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: items, owners
-                     * @example items
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Playlists_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -3377,7 +3138,38 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update coverArt relationship ("to-many").
+         * @description Updates coverArt relationship.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Playlist id
+                     * @example 550e8400-e29b-41d4-a716-446655440000
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["PlaylistCoverArtRelationshipUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
         trace?: never;
     };
     "/playlists/{id}/relationships/items": {
@@ -3399,18 +3191,13 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: items
                      * @example items
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -3424,104 +3211,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Playlists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Playlists_Items_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -3537,11 +3242,6 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
                 };
                 header?: never;
                 path: {
@@ -3559,96 +3259,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         /**
@@ -3674,96 +3291,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         options?: never;
@@ -3774,13 +3308,7 @@ export interface paths {
          */
         patch: {
             parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /**
@@ -3797,96 +3325,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         trace?: never;
@@ -3911,11 +3356,6 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
                      * @description Allows the client to customize which related resources should be returned. Available options: owners
                      * @example owners
                      */
@@ -3935,238 +3375,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Playlists_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Playlists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/providers/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get single provider.
-         * @description Retrieves single provider by id.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description Provider id
-                     * @example 771
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Providers_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -4203,104 +3427,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Providers_Multi_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Providers_Multi_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -4311,7 +3453,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/searchresults/{id}": {
+    "/providers/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -4319,8 +3461,60 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get single searchresult.
-         * @description Retrieves single searchresult by id.
+         * Get single provider.
+         * @description Retrieves single provider by id.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Provider id
+                     * @example 771
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Providers_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/searchResults/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single searchResult.
+         * @description Retrieves single searchResult by id.
          */
         get: {
             parameters: {
@@ -4330,6 +3524,11 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, playlists, topHits, tracks, videos
                      * @example albums
@@ -4348,104 +3547,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Searchresults_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["SearchResults_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -4456,7 +3573,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/searchresults/{id}/relationships/albums": {
+    "/searchResults/{id}/relationships/albums": {
         parameters: {
             query?: never;
             header?: never;
@@ -4475,6 +3592,11 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: albums
                      * @example albums
@@ -4495,104 +3617,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Searchresults_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["SearchResults_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -4603,7 +3643,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/searchresults/{id}/relationships/artists": {
+    "/searchResults/{id}/relationships/artists": {
         parameters: {
             query?: never;
             header?: never;
@@ -4622,6 +3662,11 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: artists
                      * @example artists
@@ -4642,104 +3687,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Searchresults_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["SearchResults_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -4750,7 +3713,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/searchresults/{id}/relationships/playlists": {
+    "/searchResults/{id}/relationships/playlists": {
         parameters: {
             query?: never;
             header?: never;
@@ -4769,6 +3732,11 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: playlists
                      * @example playlists
@@ -4789,104 +3757,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Searchresults_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["SearchResults_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -4897,7 +3783,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/searchresults/{id}/relationships/topHits": {
+    "/searchResults/{id}/relationships/topHits": {
         parameters: {
             query?: never;
             header?: never;
@@ -4916,6 +3802,11 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: topHits
                      * @example topHits
@@ -4936,104 +3827,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Searchresults_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["SearchResults_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -5044,7 +3853,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/searchresults/{id}/relationships/tracks": {
+    "/searchResults/{id}/relationships/tracks": {
         parameters: {
             query?: never;
             header?: never;
@@ -5063,6 +3872,11 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: tracks
                      * @example tracks
@@ -5083,104 +3897,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Searchresults_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["SearchResults_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -5191,7 +3923,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/searchresults/{id}/relationships/videos": {
+    "/searchResults/{id}/relationships/videos": {
         parameters: {
             query?: never;
             header?: never;
@@ -5210,6 +3942,11 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: videos
                      * @example videos
@@ -5230,104 +3967,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Searchresults_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["SearchResults_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -5338,7 +3993,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tracks/{id}": {
+    "/searchSuggestions/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -5346,8 +4001,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get single track.
-         * @description Retrieves single track by id.
+         * Get single searchSuggestion.
+         * @description Retrieves single searchSuggestion by id.
          */
         get: {
             parameters: {
@@ -5358,16 +4013,337 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, providers, radio, similarTracks
-                     * @example albums
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: directHits
+                     * @example directHits
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["SearchSuggestions_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/searchSuggestions/{id}/relationships/directHits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get directHits relationship ("to-many").
+         * @description Retrieves directHits relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Explicit filter
+                     * @example include, exclude
+                     */
+                    explicitFilter?: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: directHits
+                     * @example directHits
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["SearchSuggestions_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackFiles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single trackFile.
+         * @description Retrieves single trackFile by id.
+         */
+        get: {
+            parameters: {
+                query: {
+                    formats: string;
+                    usage: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["TrackFiles_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackManifests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single trackManifest.
+         * @description Retrieves single trackManifest by id.
+         */
+        get: {
+            parameters: {
+                query: {
+                    manifestType: string;
+                    formats: string;
+                    uriScheme: string;
+                    usage: string;
+                    adaptive: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["TrackManifests_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackSourceFiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple trackSourceFiles.
+         * @description Retrieves multiple trackSourceFiles by available filters, or without if applicable.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /**
+                     * @description Track source file id
+                     * @example a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+                     */
+                    "filter[id]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["TrackSourceFiles_Multi_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        /**
+         * Create single trackSourceFile.
+         * @description Creates a new trackSourceFile.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["TrackSourceFileCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["TrackSourceFiles_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackSourceFiles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single trackSourceFile.
+         * @description Retrieves single trackSourceFile by id.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
                      */
                     include?: string[];
                 };
                 header?: never;
                 path: {
                     /**
-                     * @description Track id
-                     * @example 251380837
+                     * @description Track source file id
+                     * @example a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
                      */
                     id: string;
                 };
@@ -5375,104 +4351,257 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Tracks_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["TrackSourceFiles_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackSourceFiles/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Track source file id
+                     * @example a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["TrackSourceFiles_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackStatistics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get multiple trackStatistics.
+         * @description Retrieves multiple trackStatistics by available filters, or without if applicable.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    "filter[id]"?: string[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["TrackStatistics_Multi_Resource_Data_Document"];
                     };
                 };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackStatistics/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single trackStatistic.
+         * @description Retrieves single trackStatistic by id.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["TrackStatistics_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trackStatistics/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["TrackStatistics_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -5502,19 +4631,26 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, providers, radio, similarTracks
+                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, genres, lyrics, owners, providers, radio, similarTracks, sourceFile, trackStatistics
                      * @example albums
                      */
                     include?: string[];
                     /**
-                     * @description Allows to filter the collection of resources based on isrc attribute value
-                     * @example USSM12209515
+                     * @description User id
+                     * @example 123456
+                     */
+                    "filter[r.owners.id]"?: string[];
+                    /**
+                     * @description International Standard Recording Code (ISRC)
+                     * @example QMJMT1701237
                      */
                     "filter[isrc]"?: string[];
                     /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 251380837
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
                      */
                     "filter[id]"?: string[];
                 };
@@ -5524,112 +4660,185 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
-        post?: never;
+        /**
+         * Create single track.
+         * @description Creates a new track.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["TrackCreateOperation_Payload"];
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Tracks_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/tracks/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single track.
+         * @description Retrieves single track by id.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, genres, lyrics, owners, providers, radio, similarTracks, sourceFile, trackStatistics
+                     * @example albums
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Tracks_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete single track.
+         * @description Deletes existing track.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update single track.
+         * @description Updates existing track.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["TrackUpdateOperation_Payload"];
+                };
+            };
+            responses: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
         trace?: never;
     };
     "/tracks/{id}/relationships/albums": {
@@ -5662,8 +4871,8 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description Track id
-                     * @example 251380837
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
                      */
                     id: string;
                 };
@@ -5671,104 +4880,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -5798,9 +4925,74 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: artists
                      * @example artists
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tracks/{id}/relationships/genres": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get genres relationship ("to-many").
+         * @description Retrieves genres relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: genres
+                     * @example genres
                      */
                     include?: string[];
                     /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
@@ -5809,8 +5001,8 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description Track id
-                     * @example 251380837
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
                      */
                     id: string;
                 };
@@ -5818,104 +5010,142 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tracks/{id}/relationships/lyrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get lyrics relationship ("to-many").
+         * @description Retrieves lyrics relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: lyrics
+                     * @example lyrics
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tracks/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -5956,8 +5186,8 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description Track id
-                     * @example 251380837
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
                      */
                     id: string;
                 };
@@ -5965,104 +5195,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -6098,8 +5246,8 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description Track id
-                     * @example 251380837
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
                      */
                     id: string;
                 };
@@ -6107,104 +5255,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -6234,19 +5300,19 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: similarTracks
                      * @example similarTracks
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
                     /**
-                     * @description Track id
-                     * @example 251380837
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
                      */
                     id: string;
                 };
@@ -6254,104 +5320,138 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tracks/{id}/relationships/sourceFile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get sourceFile relationship ("to-one").
+         * @description Retrieves sourceFile relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: sourceFile
+                     * @example sourceFile
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Single_Relationship_Data_Document"];
                     };
                 };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tracks/{id}/relationships/trackStatistics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get trackStatistics relationship ("to-one").
+         * @description Retrieves trackStatistics relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: trackStatistics
+                     * @example trackStatistics
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description A Tidal catalogue ID
+                     * @example 75413016
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Tracks_Single_Relationship_Data_Document"];
                     };
                 };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -6377,17 +5477,17 @@ export interface paths {
             parameters: {
                 query: {
                     /**
+                     * @description BCP 47 locale
+                     * @example en-US
+                     */
+                    locale: string;
+                    /**
                      * @description ISO 3166-1 alpha-2 country code
                      * @example US
                      */
                     countryCode: string;
                     /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, playlists
+                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, owners, playlists
                      * @example albums
                      */
                     include?: string[];
@@ -6404,397 +5504,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserCollections_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserCollections_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userCollections": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get multiple userCollections.
-         * @description Retrieves multiple userCollections by available filters, or without if applicable.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, playlists
-                     * @example albums
-                     */
-                    include?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 123456
-                     */
-                    "filter[id]"?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserCollections_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userCollections/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current user's userCollection(s).
-         * @description Retrieves current user's userCollection(s).
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, playlists
-                     * @example albums
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserCollections_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -6825,17 +5550,17 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description BCP47 locale code
+                     * @description BCP 47 locale
                      * @example en-US
                      */
                     locale: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: albums
                      * @example albums
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -6849,104 +5574,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserCollections_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserCollections_Albums_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -6979,96 +5622,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         /**
@@ -7094,96 +5654,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         options?: never;
@@ -7211,17 +5688,17 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description BCP47 locale code
+                     * @description BCP 47 locale
                      * @example en-US
                      */
                     locale: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: artists
                      * @example artists
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -7235,104 +5712,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserCollections_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserCollections_Artists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -7365,96 +5760,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         /**
@@ -7480,98 +5792,75 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userCollections/{id}/relationships/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get owners relationship ("to-many").
+         * @description Retrieves owners relationship.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: owners
+                     * @example owners
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description User id
+                     * @example 123456
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["UserCollections_Multi_Relationship_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -7596,18 +5885,13 @@ export interface paths {
                      * @example US
                      */
                     countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
                     /**
                      * @description Allows the client to customize which related resources should be returned. Available options: playlists
                      * @example playlists
                      */
                     include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
                 };
                 header?: never;
                 path: {
@@ -7621,104 +5905,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserCollections_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserCollections_Playlists_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -7728,13 +5930,7 @@ export interface paths {
          */
         post: {
             parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /**
@@ -7751,96 +5947,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         /**
@@ -7866,96 +5979,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         options?: never;
@@ -7989,1971 +6019,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserEntitlements_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userEntitlements": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get multiple userEntitlements.
-         * @description Retrieves multiple userEntitlements by available filters, or without if applicable.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 123456
-                     */
-                    "filter[id]"?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserEntitlements_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userEntitlements/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current user's userEntitlement(s).
-         * @description Retrieves current user's userEntitlement(s).
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserEntitlements_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfilePicks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get multiple userPublicProfilePicks.
-         * @description Retrieves multiple userPublicProfilePicks by available filters, or without if applicable.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: item, userPublicProfile
-                     * @example item
-                     */
-                    include?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on userPublicProfile.id attribute value
-                     * @example 123456
-                     */
-                    "filter[userPublicProfile.id]"?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 123456
-                     */
-                    "filter[id]"?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfilePicks_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfilePicks/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current user's userPublicProfilePick(s).
-         * @description Retrieves current user's userPublicProfilePick(s).
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: item, userPublicProfile
-                     * @example item
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User public profile pick id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfilePicks_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfilePicks/{id}/relationships/item": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get item relationship ("to-one").
-         * @description Retrieves item relationship.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: item
-                     * @example item
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User public profile pick id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfilePicks_Singleton_Data_Relationship_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfilePicks/{id}/relationships/userPublicProfile": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get userPublicProfile relationship ("to-one").
-         * @description Retrieves userPublicProfile relationship.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: userPublicProfile
-                     * @example userPublicProfile
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User public profile pick id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfilePicks_Singleton_Data_Relationship_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfiles/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get single userPublicProfile.
-         * @description Retrieves single userPublicProfile by id.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: followers, following, publicPicks, publicPlaylists
-                     * @example followers
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfiles_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfiles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get multiple userPublicProfiles.
-         * @description Retrieves multiple userPublicProfiles by available filters, or without if applicable.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: followers, following, publicPicks, publicPlaylists
-                     * @example followers
-                     */
-                    include?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 123456
-                     */
-                    "filter[id]"?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfiles_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfiles/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current user's userPublicProfile(s).
-         * @description Retrieves current user's userPublicProfile(s).
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: followers, following, publicPicks, publicPlaylists
-                     * @example followers
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfiles_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfiles/{id}/relationships/followers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get followers relationship ("to-many").
-         * @description Retrieves followers relationship.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: followers
-                     * @example followers
-                     */
-                    include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfiles_Multi_Data_Relationship_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfiles/{id}/relationships/following": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get following relationship ("to-many").
-         * @description Retrieves following relationship.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: following
-                     * @example following
-                     */
-                    include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfiles_Multi_Data_Relationship_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfiles/{id}/relationships/publicPicks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get publicPicks relationship ("to-many").
-         * @description Retrieves publicPicks relationship.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: publicPicks
-                     * @example publicPicks
-                     */
-                    include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfiles_Multi_Data_Relationship_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userPublicProfiles/{id}/relationships/publicPlaylists": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get publicPlaylists relationship ("to-many").
-         * @description Retrieves publicPlaylists relationship.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: publicPlaylists
-                     * @example publicPlaylists
-                     */
-                    include?: string[];
-                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
-                    "page[cursor]"?: string;
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description User id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserPublicProfiles_Multi_Data_Relationship_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                        "application/vnd.api+json": components["schemas"]["UserEntitlements_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -10006,397 +6087,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userRecommendations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get multiple userRecommendations.
-         * @description Retrieves multiple userRecommendations by available filters, or without if applicable.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: discoveryMixes, myMixes, newArrivalMixes
-                     * @example discoveryMixes
-                     */
-                    include?: string[];
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 123456
-                     */
-                    "filter[id]"?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userRecommendations/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current user's userRecommendation(s).
-         * @description Retrieves current user's userRecommendation(s).
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description BCP47 locale code
-                     * @example en-US
-                     */
-                    locale: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: discoveryMixes, myMixes, newArrivalMixes
-                     * @example discoveryMixes
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -10451,104 +6157,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -10603,104 +6227,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -10755,104 +6297,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["UserRecommendations_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -10863,268 +6323,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{id}": {
+    "/userReports": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
+        get?: never;
+        put?: never;
         /**
-         * Get single user.
-         * @description Retrieves single user by id.
+         * Create single userReport.
+         * @description Creates a new userReport.
          */
-        get: {
+        post: {
             parameters: {
                 query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description User id
-                     * @example 123456
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Users_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get multiple users.
-         * @description Retrieves multiple users by available filters, or without if applicable.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /**
-                     * @description Allows to filter the collection of resources based on id attribute value
-                     * @example 123456
-                     */
-                    "filter[id]"?: string[];
-                };
                 header?: never;
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Users_Multi_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
+            requestBody?: {
+                content: {
+                    "application/vnd.api+json": components["schemas"]["UserReportCreateOperation_Payload"];
                 };
             };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.api+json": components["schemas"]["UserReports_Single_Resource_Data_Document"];
+                    };
+                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
         };
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -11151,249 +6393,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Users_Single_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Users_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/videos/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get single video.
-         * @description Retrieves single video by id.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description ISO 3166-1 alpha-2 country code
-                     * @example US
-                     */
-                    countryCode: string;
-                    /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, providers
-                     * @example albums
-                     */
-                    include?: string[];
-                };
-                header?: never;
-                path: {
-                    /**
-                     * @description Video id
-                     * @example 75623239
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Videos_Single_Data_Document"];
-                    };
-                };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -11424,7 +6439,7 @@ export interface paths {
                      */
                     countryCode: string;
                     /**
-                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, providers
+                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, providers, thumbnailArt
                      * @example albums
                      */
                     include?: string[];
@@ -11445,104 +6460,85 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Data_Document"];
+                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Resource_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single video.
+         * @description Retrieves single video by id.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: albums, artists, providers, thumbnailArt
+                     * @example albums
+                     */
+                    include?: string[];
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Video id
+                     * @example 75623239
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Videos_Single_Resource_Data_Document"];
                     };
                 };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -11592,104 +6588,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -11739,104 +6653,22 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -11886,104 +6718,87 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Successful response */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Data_Relationship_Document"];
+                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Bad request on client party. Ensure the proper HTTP request is sent (query parameters, request body, etc.). */
-                400: {
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{id}/relationships/thumbnailArt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get thumbnailArt relationship ("to-many").
+         * @description Retrieves thumbnailArt relationship.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example US
+                     */
+                    countryCode: string;
+                    /**
+                     * @description Allows the client to customize which related resources should be returned. Available options: thumbnailArt
+                     * @example thumbnailArt
+                     */
+                    include?: string[];
+                    /** @description Server-generated cursor value pointing a certain page of items. Optional, targets first page if not specified */
+                    "page[cursor]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Video id
+                     * @example 75623239
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
+                        "application/vnd.api+json": components["schemas"]["Videos_Multi_Relationship_Data_Document"];
                     };
                 };
-                /** @description Resource not found. The requested resource is not found. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Method not supported. Ensure a proper HTTP method for an HTTP request is used. */
-                405: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Not acceptable. The server doesn't support any of the requested by client acceptable content types. */
-                406: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Unsupported Media Type. The API is using content negotiation. Ensure the proper media type is set into Content-Type header. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Too many HTTP requests have been made within the allowed time. */
-                429: {
-                    headers: {
-                        /**
-                         * @description Number of tokens currently remaining. Refer to X-RateLimit-Replenish-Rate header for replenishment information.
-                         * @example 5
-                         */
-                        "X-RateLimit-Remaining": number;
-                        /**
-                         * @description Initial number of tokens, and max number of tokens that can be replenished.
-                         * @example 20
-                         */
-                        "X-RateLimit-Burst-Capacity": number;
-                        /**
-                         * @description Number of tokens replenished per second.
-                         * @example 5
-                         */
-                        "X-RateLimit-Replenish-Rate": number;
-                        /**
-                         * @description Request cost in tokens.
-                         * @example 5
-                         */
-                        "X-RateLimit-Requested-Tokens": number;
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unavailable For Legal Reasons */
-                451: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
-                /** @description Internal Server Error. Something went wrong on the server party. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/vnd.api+json": components["schemas"]["Error_Document"];
-                    };
-                };
+                400: components["responses"]["Bad_Request_Response"];
+                404: components["responses"]["Not_Found_Response"];
+                405: components["responses"]["Method_Not_Allowed_Response"];
+                406: components["responses"]["Not_Acceptable_Response"];
+                415: components["responses"]["Unsupported_Media_Type_Response"];
+                429: components["responses"]["Too_Many_Requests_Response"];
+                500: components["responses"]["Internal_Server_Error_Response"];
             };
         };
         put?: never;
@@ -11998,17 +6813,123 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        Albums_Attributes: {
-            /**
-             * @description Original title
-             * @example 4:44
-             */
+        AlbumCoverArtRelationshipUpdateOperation_Payload: {
+            data: components["schemas"]["AlbumCoverArtRelationshipUpdateOperation_Payload_Data"][];
+        };
+        AlbumCoverArtRelationshipUpdateOperation_Payload_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "artworks";
+        };
+        AlbumCreateOperation_Payload: {
+            data: components["schemas"]["AlbumCreateOperation_Payload_Data"];
+        };
+        AlbumCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["AlbumCreateOperation_Payload_Data_Attributes"];
+            relationships: components["schemas"]["AlbumCreateOperation_Payload_Data_Relationships"];
+            /** @enum {string} */
+            type: "albums";
+        };
+        AlbumCreateOperation_Payload_Data_Attributes: {
+            copyright?: components["schemas"]["AlbumCreateOperation_Payload_Data_Attributes_Copyright"];
+            explicitLyrics?: boolean;
+            /** Format: date */
+            releaseDate?: string;
             title: string;
+            upc?: string;
+            version?: string;
+        };
+        AlbumCreateOperation_Payload_Data_Attributes_Copyright: {
+            text: string;
+            /** Format: int32 */
+            year?: number;
+        };
+        AlbumCreateOperation_Payload_Data_Relationships: {
+            artists: components["schemas"]["AlbumCreateOperation_Payload_Data_Relationships_Artists"];
+            genres?: components["schemas"]["AlbumCreateOperation_Payload_Data_Relationships_Genres"];
+        };
+        AlbumCreateOperation_Payload_Data_Relationships_Artists: {
+            data: components["schemas"]["AlbumCreateOperation_Payload_Data_Relationships_Artists_Data"][];
+        };
+        AlbumCreateOperation_Payload_Data_Relationships_Artists_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "artists";
+        };
+        AlbumCreateOperation_Payload_Data_Relationships_Genres: {
+            data: components["schemas"]["AlbumCreateOperation_Payload_Data_Relationships_Genres_Data"][];
+        };
+        AlbumCreateOperation_Payload_Data_Relationships_Genres_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "genres";
+        };
+        AlbumUpdateOperation_Payload: {
+            data: components["schemas"]["AlbumUpdateOperation_Payload_Data"];
+        };
+        AlbumUpdateOperation_Payload_Data: {
+            attributes: components["schemas"]["AlbumUpdateOperation_Payload_Data_Attributes"];
+            id: string;
+            relationships?: components["schemas"]["AlbumUpdateOperation_Payload_Data_Relationships"];
+            /** @enum {string} */
+            type: "albums";
+        };
+        AlbumUpdateOperation_Payload_Data_Attributes: {
+            copyright?: components["schemas"]["AlbumUpdateOperation_Payload_Data_Attributes_Copyright"];
+            explicitLyrics?: boolean;
+            /** Format: date */
+            releaseDate?: string;
+            title: string;
+            version?: string;
+        };
+        AlbumUpdateOperation_Payload_Data_Attributes_Copyright: {
+            text: string;
+            /** Format: int32 */
+            year?: number;
+        };
+        AlbumUpdateOperation_Payload_Data_Relationships: {
+            genres?: components["schemas"]["AlbumUpdateOperation_Payload_Data_Relationships_Genres"];
+        };
+        AlbumUpdateOperation_Payload_Data_Relationships_Genres: {
+            data: components["schemas"]["AlbumUpdateOperation_Payload_Data_Relationships_Genres_Data"][];
+        };
+        AlbumUpdateOperation_Payload_Data_Relationships_Genres_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "genres";
+        };
+        Albums_Attributes: {
+            /** @description Available usage for this album */
+            availability?: ("STREAM" | "DJ" | "STEM")[];
             /**
              * @description Barcode id (EAN-13 or UPC-A)
              * @example 00854242007552
              */
             barcodeId: string;
+            /**
+             * @description Copyright
+             * @example (p)(c) 2017 S. CARTER ENTERPRISES, LLC. MARKETED BY ROC NATION & DISTRIBUTED BY ROC NATION/UMG RECORDINGS INC.
+             */
+            copyright?: string;
+            /**
+             * @description Duration (ISO 8601)
+             * @example PT46M17S
+             */
+            duration: string;
+            /**
+             * @description Explicit content
+             * @example true
+             */
+            explicit: boolean;
+            /** @description Album links external to TIDAL API */
+            externalLinks?: components["schemas"]["External_Link"][];
+            mediaTags: string[];
+            /**
+             * Format: int32
+             * @description Number of items in album
+             * @example 13
+             */
+            numberOfItems: number;
             /**
              * Format: int32
              * @description Number of volumes
@@ -12016,21 +6937,11 @@ export interface components {
              */
             numberOfVolumes: number;
             /**
-             * Format: int32
-             * @description Number of album items
-             * @example 13
+             * Format: double
+             * @description Popularity (0.0 - 1.0)
+             * @example 0.56
              */
-            numberOfItems: number;
-            /**
-             * @description Duration (ISO-8601)
-             * @example P41M5S
-             */
-            duration: string;
-            /**
-             * @description Indicates whether an album consist of any explicit content
-             * @example true
-             */
-            explicit: boolean;
+            popularity: number;
             /**
              * Format: date
              * @description Release date (ISO-8601)
@@ -12038,139 +6949,325 @@ export interface components {
              */
             releaseDate?: string;
             /**
-             * @description Copyright information
-             * @example (p)(c) 2017 S. CARTER ENTERPRISES, LLC. MARKETED BY ROC NATION & DISTRIBUTED BY ROC NATION/UMG RECORDINGS INC.
+             * @description Album title
+             * @example 4:44
              */
-            copyright?: string;
+            title: string;
             /**
-             * Format: double
-             * @description Album popularity (ranged in 0.00 ... 1.00). Conditionally visible
-             * @example 0.56
-             */
-            popularity: number;
-            /** @description Defines an album availability e.g. for streaming, DJs, stems */
-            availability?: ("STREAM" | "DJ" | "STEM")[];
-            mediaTags: string[];
-            /** @description Represents available links to, and metadata about, an album cover images */
-            imageLinks?: components["schemas"]["Image_Link"][];
-            /** @description Represents available links to, and metadata about, an album cover videos */
-            videoLinks?: components["schemas"]["Video_Link"][];
-            /** @description Represents available links to something that is related to an album resource, but external to the TIDAL API */
-            externalLinks?: components["schemas"]["External_Link"][];
-            /**
-             * @description Album type, e.g. single, regular album, or extended play
+             * @description Album type
              * @enum {string}
              */
             type: "ALBUM" | "EP" | "SINGLE";
         };
-        Albums_Items_Multi_Data_Relationship_Document: {
+        Albums_Items_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Albums_Items_Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
+            links: components["schemas"]["Links"];
         };
-        /** @description Resource identifier JSON:API object */
         Albums_Items_Resource_Identifier: {
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            meta?: components["schemas"]["Albums_Items_Resource_Identifier_Meta"];
             /**
-             * @description resource unique type
+             * @description Resource type
              * @example tracks
              */
             type: string;
-            meta?: components["schemas"]["Albums_Items_Resource_Identifier_Meta"];
         };
         Albums_Items_Resource_Identifier_Meta: {
-            /**
-             * Format: int32
-             * @description volume number
-             * @example 1
-             */
-            volumeNumber: number;
             /**
              * Format: int32
              * @description track number
              * @example 4
              */
             trackNumber: number;
+            /**
+             * Format: int32
+             * @description volume number
+             * @example 1
+             */
+            volumeNumber: number;
         };
-        Albums_Multi_Data_Document: {
-            data?: components["schemas"]["Albums_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Artists_Resource"] | components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Albums_Resource"])[];
-        };
-        Albums_Multi_Data_Relationship_Document: {
+        Albums_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Artists_Resource"] | components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Albums_Resource"] | components["schemas"]["Albums_Resource"])[];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Albums_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Albums_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Albums_Relationships: {
-            artists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            similarAlbums: components["schemas"]["Multi_Data_Relationship_Doc"];
-            items: components["schemas"]["Albums_Items_Multi_Data_Relationship_Document"];
-            providers: components["schemas"]["Multi_Data_Relationship_Doc"];
+            artists: components["schemas"]["Multi_Relationship_Data_Document"];
+            coverArt: components["schemas"]["Multi_Relationship_Data_Document"];
+            genres: components["schemas"]["Multi_Relationship_Data_Document"];
+            items: components["schemas"]["Albums_Items_Multi_Relationship_Data_Document"];
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+            providers: components["schemas"]["Multi_Relationship_Data_Document"];
+            similarAlbums: components["schemas"]["Multi_Relationship_Data_Document"];
         };
-        Albums_Resource: {
+        Albums_Resource_Object: {
             attributes?: components["schemas"]["Albums_Attributes"];
-            relationships?: components["schemas"]["Albums_Relationships"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            relationships?: components["schemas"]["Albums_Relationships"];
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "albums";
         };
-        Albums_Single_Data_Document: {
-            data?: components["schemas"]["Albums_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Artists_Resource"] | components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Albums_Resource"])[];
+        Albums_Single_Resource_Data_Document: {
+            data: components["schemas"]["Albums_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        ArtistBiographies_Attributes: {
+            /**
+             * @description Boolean to indicate if the biography is editable (source = tidal or artist)
+             * @example true
+             */
+            editable: boolean;
+            /**
+             * @description Artist biography
+             * @example Once upon a time an artist is born
+             */
+            text: string;
+        };
+        ArtistBiographies_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        ArtistBiographies_Multi_Resource_Data_Document: {
+            data: components["schemas"]["ArtistBiographies_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        ArtistBiographies_Relationships: {
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+        };
+        ArtistBiographies_Resource_Object: {
+            attributes?: components["schemas"]["ArtistBiographies_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["ArtistBiographies_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "artistBiographies";
+        };
+        ArtistBiographies_Single_Resource_Data_Document: {
+            data: components["schemas"]["ArtistBiographies_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        ArtistBiographyUpdateBody: {
+            data: components["schemas"]["ArtistBiographyUpdateBody_Data"];
+        };
+        ArtistBiographyUpdateBody_Data: {
+            attributes: components["schemas"]["ArtistBiographyUpdateBody_Data_Attributes"];
+            id: string;
+            /** @enum {string} */
+            type: "artistBiographies";
+        };
+        ArtistBiographyUpdateBody_Data_Attributes: {
+            text?: string;
+        };
+        ArtistClaimAcceptedArtistsRelationshipUpdateOperation_Payload: {
+            data: components["schemas"]["ArtistClaimAcceptedArtistsRelationshipUpdateOperation_Payload_Data"][];
+        };
+        ArtistClaimAcceptedArtistsRelationshipUpdateOperation_Payload_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "artists";
+        };
+        /**
+         * @description Artist claim id
+         * @example f47ac10b-58cc-4372-a567-0e02b2c3d479
+         */
+        ArtistClaimId: {
+            value?: string;
+        };
+        ArtistClaimsCreateOperation_Payload: {
+            data: components["schemas"]["ArtistClaimsCreateOperation_Payload_Data"];
+        };
+        ArtistClaimsCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["ArtistClaimsCreateOperation_Payload_Data_Attributes"];
+            /** @enum {string} */
+            type: "artistClaims";
+        };
+        ArtistClaimsCreateOperation_Payload_Data_Attributes: {
+            /** @enum {string} */
+            provider: "DISTROKID" | "CDBABY" | "TUNECORE";
+        };
+        ArtistClaimsUpdateOperation_Payload: {
+            data?: components["schemas"]["ArtistClaimsUpdateOperation_Payload_Data"];
+            meta: components["schemas"]["ArtistClaimsUpdateOperation_Payload_Meta"];
+        };
+        ArtistClaimsUpdateOperation_Payload_Data: {
+            attributes?: components["schemas"]["ArtistClaimsUpdateOperation_Payload_Data_Attributes"];
+            id?: components["schemas"]["ArtistClaimId"];
+            /** @enum {string} */
+            type: "artistClaims";
+        };
+        ArtistClaimsUpdateOperation_Payload_Data_Attributes: Record<string, never>;
+        ArtistClaimsUpdateOperation_Payload_Meta: {
+            authorizationCode: string;
+        };
+        ArtistClaims_Attributes: {
+            /**
+             * @description The DSP used for authentication
+             * @enum {string}
+             */
+            provider: "DISTROKID" | "CDBABY" | "TUNECORE";
+            /**
+             * @description The recommended claim resolution
+             * @enum {string}
+             */
+            recommendation?: "DSP_PROFILE_CLAIMED" | "CONTENT_MIGRATED_TO_UPLOADS" | "NO_CONTENT_MATCHED";
+            /** @description The DSP redirect url used for authentication */
+            redirectUrl?: string;
+            /** @description List of UPCs retrieved from the DSP */
+            retrievedUpcs?: components["schemas"]["BarcodeId"][];
+            /**
+             * @description Current status of this claim
+             * @enum {string}
+             */
+            status?: "AWAITING_OAUTH" | "FETCHING_CONTENT" | "VERIFIED" | "NO_MATCHES" | "AUTHENTICATION_FAILED" | "PROCESSING" | "COMPLETED" | "FAILED" | "CANCELLED";
+        };
+        ArtistClaims_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        ArtistClaims_Multi_Resource_Data_Document: {
+            data: components["schemas"]["ArtistClaims_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        ArtistClaims_Relationships: {
+            acceptedArtists: components["schemas"]["Multi_Relationship_Data_Document"];
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+            recommendedArtists: components["schemas"]["Multi_Relationship_Data_Document"];
+        };
+        ArtistClaims_Resource_Object: {
+            attributes?: components["schemas"]["ArtistClaims_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["ArtistClaims_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "artistClaims";
+        };
+        ArtistClaims_Single_Resource_Data_Document: {
+            data: components["schemas"]["ArtistClaims_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        ArtistCreateOperation_Meta: {
+            dryRun?: boolean;
+        };
+        ArtistCreateOperation_Payload: {
+            data: components["schemas"]["ArtistCreateOperation_Payload_Data"];
+            meta?: components["schemas"]["ArtistCreateOperation_Meta"];
+        };
+        ArtistCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["ArtistCreateOperation_Payload_Data_Attributes"];
+            /** @enum {string} */
+            type: "artists";
+        };
+        ArtistCreateOperation_Payload_Data_Attributes: {
+            handle?: string;
+            name: string;
+        };
+        ArtistProfileArtRelationshipUpdateOperation_Payload: {
+            data: components["schemas"]["ArtistProfileArtRelationshipUpdateOperation_Payload_Data"][];
+        };
+        ArtistProfileArtRelationshipUpdateOperation_Payload_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "artworks";
         };
         ArtistRoles_Attributes: {
             name?: string;
         };
-        ArtistRoles_Multi_Data_Document: {
-            data?: components["schemas"]["ArtistRoles_Resource"][];
-            links?: components["schemas"]["Links"];
+        ArtistRoles_Multi_Resource_Data_Document: {
+            data: components["schemas"]["ArtistRoles_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
-        ArtistRoles_Resource: {
+        ArtistRoles_Resource_Object: {
             attributes?: components["schemas"]["ArtistRoles_Attributes"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "artistRoles";
         };
-        ArtistRoles_Single_Data_Document: {
-            data?: components["schemas"]["ArtistRoles_Resource"];
-            links?: components["schemas"]["Links"];
+        ArtistRoles_Single_Resource_Data_Document: {
+            data: components["schemas"]["ArtistRoles_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         ArtistUpdateBody: {
             data: components["schemas"]["ArtistUpdateBody_Data"];
+            meta?: components["schemas"]["ArtistUpdateBody_Meta"];
         };
         ArtistUpdateBody_Data: {
+            attributes: components["schemas"]["ArtistUpdateBody_Data_Attributes"];
             id: string;
             /** @enum {string} */
             type: "artists";
-            attributes: components["schemas"]["ArtistUpdateBody_Data_Attributes"];
         };
         ArtistUpdateBody_Data_Attributes: {
-            name?: string;
+            contributionsEnabled?: boolean;
+            contributionsSalesPitch?: string;
+            externalLinks?: components["schemas"]["External_Link_Payload"][];
             handle?: string;
-            image?: components["schemas"]["Image_Link"][];
+            name?: string;
+        };
+        ArtistUpdateBody_Meta: {
+            dryRun?: boolean;
         };
         Artists_Attributes: {
+            /**
+             * @description Is the artist enabled for contributions?
+             * @example true
+             */
+            contributionsEnabled?: boolean;
+            /**
+             * @description Contributions sales pitch
+             * @example Help me be a full time artist
+             */
+            contributionsSalesPitch?: string;
+            /** @description Artist links external to TIDAL API */
+            externalLinks?: components["schemas"]["External_Link"][];
+            /**
+             * @description Artist handle
+             * @example jayz
+             */
+            handle?: string;
             /**
              * @description Artist name
              * @example JAY Z
@@ -12178,125 +7275,238 @@ export interface components {
             name: string;
             /**
              * Format: double
-             * @description Artist popularity (ranged in 0.00 ... 1.00). Conditionally visible
+             * @description Artist popularity (0.0 - 1.0)
              * @example 0.56
              */
             popularity: number;
-            /** @description Represents available links to, and metadata about, an artist images */
-            imageLinks?: components["schemas"]["Image_Link"][];
-            /** @description Represents available links to something that is related to an artist resource, but external to the TIDAL API */
-            externalLinks?: components["schemas"]["External_Link"][];
             /**
-             * @deprecated
-             * @description Artist roles
+             * @description Is the artist spotlighted?
+             * @example true
              */
-            roles?: ("ARTIST" | "SONGWRITER" | "ENGINEER" | "PRODUCTION_TEAM" | "PERFORMER" | "PRODUCER" | "MISC")[];
-            /**
-             * @description Artist handle
-             * @example jayz
-             */
-            handle?: string;
+            spotlighted?: boolean;
         };
-        Artists_Multi_Data_Document: {
-            data?: components["schemas"]["Artists_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["ArtistRoles_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Artists_Resource"])[];
-        };
-        Artists_Multi_Data_Relationship_Document: {
+        Artists_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["ArtistRoles_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Artists_Resource"])[];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Artists_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Artists_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Artists_Relationships: {
-            similarArtists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            albums: components["schemas"]["Multi_Data_Relationship_Doc"];
-            roles: components["schemas"]["Multi_Data_Relationship_Doc"];
-            videos: components["schemas"]["Multi_Data_Relationship_Doc"];
-            trackProviders: components["schemas"]["Artists_TrackProviders_Multi_Data_Relationship_Document"];
-            tracks: components["schemas"]["Multi_Data_Relationship_Doc"];
-            radio: components["schemas"]["Multi_Data_Relationship_Doc"];
+            albums: components["schemas"]["Multi_Relationship_Data_Document"];
+            biography: components["schemas"]["Single_Relationship_Data_Document"];
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+            profileArt: components["schemas"]["Multi_Relationship_Data_Document"];
+            radio: components["schemas"]["Multi_Relationship_Data_Document"];
+            roles: components["schemas"]["Multi_Relationship_Data_Document"];
+            similarArtists: components["schemas"]["Multi_Relationship_Data_Document"];
+            trackProviders: components["schemas"]["Artists_TrackProviders_Multi_Relationship_Data_Document"];
+            tracks: components["schemas"]["Multi_Relationship_Data_Document"];
+            videos: components["schemas"]["Multi_Relationship_Data_Document"];
         };
-        Artists_Resource: {
+        Artists_Resource_Object: {
             attributes?: components["schemas"]["Artists_Attributes"];
-            relationships?: components["schemas"]["Artists_Relationships"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            relationships?: components["schemas"]["Artists_Relationships"];
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "artists";
         };
-        Artists_Single_Data_Document: {
-            data?: components["schemas"]["Artists_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["ArtistRoles_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Artists_Resource"])[];
+        Artists_Single_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
-        Artists_TrackProviders_Multi_Data_Relationship_Document: {
+        Artists_Single_Resource_Data_Document: {
+            data: components["schemas"]["Artists_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Artists_TrackProviders_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Artists_TrackProviders_Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
+            links: components["schemas"]["Links"];
         };
-        /** @description Resource identifier JSON:API object */
         Artists_TrackProviders_Resource_Identifier: {
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            meta?: components["schemas"]["Artists_TrackProviders_Resource_Identifier_Meta"];
             /**
-             * @description resource unique type
+             * @description Resource type
              * @example tracks
              */
             type: string;
-            meta?: components["schemas"]["Artists_TrackProviders_Resource_Identifier_Meta"];
         };
         Artists_TrackProviders_Resource_Identifier_Meta: {
             /**
              * Format: int64
-             * @description total number of tracks released together with the provider
+             * @description Total number of tracks released together with the provider
              * @example 14
              */
             numberOfTracks: number;
         };
-        /** @description JSON:API error document object */
-        Error_Document: {
-            /** @description array of error objects */
-            errors?: components["schemas"]["Error_Object"][];
-            links?: components["schemas"]["Links"];
+        ArtworkCreateOperation_Payload: {
+            data: components["schemas"]["ArtworkCreateOperation_Payload_Data"];
         };
-        /** @description JSON:API error object */
+        ArtworkCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["ArtworkCreateOperation_Payload_Data_Attributes"];
+            /** @enum {string} */
+            type: "artworks";
+        };
+        ArtworkCreateOperation_Payload_Data_Attributes: {
+            /** @enum {string} */
+            mediaType: "IMAGE" | "VIDEO";
+            sourceFile: components["schemas"]["ArtworkCreateOperation_Payload_Data_Attributes_SourceFile"];
+        };
+        ArtworkCreateOperation_Payload_Data_Attributes_SourceFile: {
+            md5Hash: string;
+            /** Format: int64 */
+            size: number;
+        };
+        /** @description Artwork files */
+        Artwork_File: {
+            /** @description Artwork file href */
+            href: string;
+            meta?: components["schemas"]["Artwork_File_Meta"];
+        };
+        /** @description Metadata about an artwork file */
+        Artwork_File_Meta: {
+            /**
+             * Format: int32
+             * @description Height (in pixels)
+             * @example 80
+             */
+            height: number;
+            /**
+             * Format: int32
+             * @description Width (in pixels)
+             * @example 80
+             */
+            width: number;
+        };
+        /** @description Artwork source file */
+        Artwork_SourceFile: {
+            /** @description MD5 hash of file to be uploaded */
+            md5Hash: string;
+            /**
+             * Format: int64
+             * @description File size of the artwork in bytes
+             */
+            size: number;
+            status: components["schemas"]["File_Status"];
+            uploadLink: components["schemas"]["File_Upload_Link"];
+        };
+        Artworks_Attributes: {
+            /** @description Artwork files */
+            files: components["schemas"]["Artwork_File"][];
+            /**
+             * @description Media type of artwork files
+             * @enum {string}
+             */
+            mediaType: "IMAGE" | "VIDEO";
+            sourceFile?: components["schemas"]["Artwork_SourceFile"];
+        };
+        Artworks_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Artworks_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Artworks_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Artworks_Relationships: {
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+        };
+        Artworks_Resource_Object: {
+            attributes?: components["schemas"]["Artworks_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["Artworks_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "artworks";
+        };
+        Artworks_Single_Resource_Data_Document: {
+            data: components["schemas"]["Artworks_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        AttachSourceFileToTrack: {
+            id: string;
+            /** @enum {string} */
+            type: "tracks";
+        };
+        /** @description Track normalization data */
+        AudioNormalizationData: {
+            /** Format: float */
+            peakAmplitude?: number;
+            /** Format: float */
+            replayGain?: number;
+        };
+        /**
+         * @description Barcode Id
+         * @example 196589525444
+         */
+        BarcodeId: {
+            value: string;
+        };
+        /** @description DRM data. Absence implies no DRM. */
+        DrmData: {
+            certificateUrl?: string;
+            /** @enum {string} */
+            drmSystem?: "FAIRPLAY" | "WIDEVINE";
+            licenseUrl?: string;
+        };
         Error_Object: {
-            /** @description unique identifier for this particular occurrence of the problem */
-            id?: string;
-            /** @description HTTP status code applicable to this problem */
-            status?: string;
             /** @description application-specific error code */
             code?: string;
             /** @description human-readable explanation specific to this occurrence of the problem */
             detail?: string;
+            /** @description unique identifier for this particular occurrence of the problem */
+            id?: string;
             source?: components["schemas"]["Error_Object_Source"];
+            /** @description HTTP status code applicable to this problem */
+            status?: string;
         };
-        /** @description object containing references to the primary source of the error */
         Error_Object_Source: {
             /**
-             * @description a JSON Pointer [RFC6901] to the value in the request document that caused the error
-             * @example /data/attributes/title
+             * @description string indicating the name of a single request header which caused the error
+             * @example X-some-custom-header
              */
-            pointer?: string;
+            header?: string;
             /**
              * @description string indicating which URI query parameter caused the error.
              * @example countryCode
              */
             parameter?: string;
             /**
-             * @description string indicating the name of a single request header which caused the error
-             * @example X-some-custom-header
+             * @description a JSON Pointer [RFC6901] to the value in the request document that caused the error
+             * @example /data/attributes/title
              */
-            header?: string;
+            pointer?: string;
+        };
+        Errors_Document: {
+            /** @description Array of error objects */
+            errors?: components["schemas"]["Error_Object"][];
+            links?: components["schemas"]["Links"];
         };
         External_Link: {
             href: string;
@@ -12305,57 +7515,200 @@ export interface components {
         /** @description metadata about an external link */
         External_Link_Meta: {
             /** @enum {string} */
-            type: "TIDAL_SHARING" | "TIDAL_AUTOPLAY_ANDROID" | "TIDAL_AUTOPLAY_IOS" | "TIDAL_AUTOPLAY_WEB" | "TWITTER" | "FACEBOOK" | "INSTAGRAM" | "TIKTOK" | "SNAPCHAT" | "HOMEPAGE";
+            type: "TIDAL_SHARING" | "TIDAL_AUTOPLAY_ANDROID" | "TIDAL_AUTOPLAY_IOS" | "TIDAL_AUTOPLAY_WEB" | "TWITTER" | "FACEBOOK" | "INSTAGRAM" | "TIKTOK" | "SNAPCHAT" | "OFFICIAL_HOMEPAGE" | "CASHAPP_CONTRIBUTIONS";
         };
-        Image_Link: {
+        External_Link_Payload: {
+            href?: string;
+            meta: components["schemas"]["External_Link_Meta"];
+        };
+        /** @description File status */
+        File_Status: {
+            /**
+             * @description Moderation status for file
+             * @enum {string}
+             */
+            moderationFileStatus: "NOT_MODERATED" | "SCANNING" | "FLAGGED" | "TAKEN_DOWN" | "OK" | "ERROR";
+            /**
+             * @description Technical status for file
+             * @enum {string}
+             */
+            technicalFileStatus: "UPLOAD_REQUESTED" | "PROCESSING" | "OK" | "ERROR";
+        };
+        /** @description Upload link */
+        File_Upload_Link: {
+            /** @description Href to upload actual file to */
             href: string;
-            meta: components["schemas"]["Image_Link_Meta"];
+            meta: components["schemas"]["File_Upload_Link_Meta"];
         };
-        /** @description metadata about an image */
-        Image_Link_Meta: {
-            /**
-             * Format: int32
-             * @description image width (in pixels)
-             * @example 80
-             */
-            width: number;
-            /**
-             * Format: int32
-             * @description image height (in pixels)
-             * @example 80
-             */
-            height: number;
+        /** @description metadata for upload link */
+        File_Upload_Link_Meta: {
+            /** @description HTTP headers that must be added to the operation */
+            headers?: {
+                [key: string]: string;
+            };
+            /** @description HTTP method */
+            method: string;
         };
-        /** @description Links JSON:API object */
+        Genres_Attributes: {
+            /**
+             * @description Genre name
+             * @example pop
+             */
+            genreName: string;
+        };
+        Genres_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Genres_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Genres_Resource_Object: {
+            attributes?: components["schemas"]["Genres_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "genres";
+        };
+        Genres_Single_Resource_Data_Document: {
+            data: components["schemas"]["Genres_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Included: (components["schemas"]["Albums_Resource_Object"] | components["schemas"]["ArtistBiographies_Resource_Object"] | components["schemas"]["ArtistClaims_Resource_Object"] | components["schemas"]["ArtistRoles_Resource_Object"] | components["schemas"]["Artists_Resource_Object"] | components["schemas"]["Artworks_Resource_Object"] | components["schemas"]["Genres_Resource_Object"] | components["schemas"]["Lyrics_Resource_Object"] | components["schemas"]["Playlists_Resource_Object"] | components["schemas"]["Providers_Resource_Object"] | components["schemas"]["SearchResults_Resource_Object"] | components["schemas"]["SearchSuggestions_Resource_Object"] | components["schemas"]["TrackFiles_Resource_Object"] | components["schemas"]["TrackManifests_Resource_Object"] | components["schemas"]["TrackSourceFiles_Resource_Object"] | components["schemas"]["TrackStatistics_Resource_Object"] | components["schemas"]["Tracks_Resource_Object"] | components["schemas"]["UserCollections_Resource_Object"] | components["schemas"]["UserEntitlements_Resource_Object"] | components["schemas"]["UserRecommendations_Resource_Object"] | components["schemas"]["UserReports_Resource_Object"] | components["schemas"]["Users_Resource_Object"] | components["schemas"]["Videos_Resource_Object"])[];
         Links: {
+            meta?: components["schemas"]["Links_Meta"];
             /**
-             * @description the link that generated the current response document
-             * @example /artists/xyz/relationships/tracks
-             */
-            self: string;
-            /**
-             * @description the next page of data (pagination)
+             * @description Link to next page
              * @example /artists/xyz/relationships/tracks?page[cursor]=zyx
              */
             next?: string;
+            /**
+             * @description Link to self
+             * @example /artists/xyz/relationships/tracks
+             */
+            self: string;
         };
-        Multi_Data_Relationship_Doc: {
+        /** @description Non-standard meta information for links */
+        Links_Meta: {
+            /**
+             * @description Only cursor part of next link
+             * @example zyx
+             */
+            nextCursor: string;
+        };
+        LyricsCreateOperation_Payload: {
+            data: components["schemas"]["LyricsCreateOperation_Payload_Data"];
+            meta?: components["schemas"]["LyricsCreateOperation_Payload_Meta"];
+        };
+        LyricsCreateOperation_Payload_Data: {
+            attributes?: components["schemas"]["LyricsCreateOperation_Payload_Data_Attributes"];
+            relationships: components["schemas"]["LyricsCreateOperation_Payload_Data_Relationships"];
+            /** @enum {string} */
+            type: "lyrics";
+        };
+        LyricsCreateOperation_Payload_Data_Attributes: {
+            text?: string;
+        };
+        LyricsCreateOperation_Payload_Data_Relationships: {
+            track: components["schemas"]["LyricsCreateOperation_Payload_Data_Relationships_Track"];
+        };
+        LyricsCreateOperation_Payload_Data_Relationships_Track: {
+            id: string;
+            /** @enum {string} */
+            type: "tracks";
+        };
+        LyricsCreateOperation_Payload_Meta: {
+            generate?: boolean;
+        };
+        LyricsUpdateOperation_Payload: {
+            data: components["schemas"]["LyricsUpdateOperation_Payload_Data"];
+        };
+        LyricsUpdateOperation_Payload_Data: {
+            attributes: components["schemas"]["LyricsUpdateOperation_Payload_Data_Attributes"];
+            id: string;
+            /** @enum {string} */
+            type: "lyrics";
+        };
+        LyricsUpdateOperation_Payload_Data_Attributes: {
+            text: string;
+        };
+        Lyrics_Attributes: {
+            /** @enum {string} */
+            technicalStatus: "PENDING" | "PROCESSING" | "ERROR" | "OK";
+            text?: string;
+        };
+        Lyrics_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Lyrics_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Lyrics_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Lyrics_Relationships: {
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+            track: components["schemas"]["Single_Relationship_Data_Document"];
+        };
+        Lyrics_Resource_Object: {
+            attributes?: components["schemas"]["Lyrics_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["Lyrics_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "lyrics";
+        };
+        Lyrics_Single_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Lyrics_Single_Resource_Data_Document: {
+            data: components["schemas"]["Lyrics_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            links: components["schemas"]["Links"];
+        };
+        PlaylistCoverArtRelationshipUpdateOperation_Payload: {
+            data: components["schemas"]["PlaylistCoverArtRelationshipUpdateOperation_Payload_Data"][];
+        };
+        PlaylistCoverArtRelationshipUpdateOperation_Payload_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "artworks";
         };
         PlaylistCreateOperation_Payload: {
             data: components["schemas"]["PlaylistCreateOperation_Payload_Data"];
         };
         PlaylistCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["PlaylistCreateOperation_Payload_Data_Attributes"];
             /** @enum {string} */
             type: "playlists";
-            attributes: components["schemas"]["PlaylistCreateOperation_Payload_Data_Attributes"];
         };
         PlaylistCreateOperation_Payload_Data_Attributes: {
-            name: string;
+            /**
+             * @description Access type
+             * @example PUBLIC
+             * @enum {string}
+             */
+            accessType?: "PUBLIC" | "UNLISTED";
             description?: string;
-            /** @enum {string} */
-            privacy: "PUBLIC" | "PRIVATE";
+            name: string;
         };
         PlaylistItemsRelationshipAddOperation_Payload: {
             data: components["schemas"]["PlaylistItemsRelationshipAddOperation_Payload_Data"][];
@@ -12374,9 +7727,9 @@ export interface components {
         };
         PlaylistItemsRelationshipRemoveOperation_Payload_Data: {
             id: string;
+            meta: components["schemas"]["PlaylistItemsRelationshipRemoveOperation_Payload_Data_Meta"];
             /** @enum {string} */
             type: "tracks" | "videos";
-            meta: components["schemas"]["PlaylistItemsRelationshipRemoveOperation_Payload_Data_Meta"];
         };
         PlaylistItemsRelationshipRemoveOperation_Payload_Data_Meta: {
             itemId: string;
@@ -12387,9 +7740,9 @@ export interface components {
         };
         PlaylistItemsRelationshipReorderOperation_Payload_Data: {
             id: string;
+            meta: components["schemas"]["PlaylistItemsRelationshipReorderOperation_Payload_Data_Meta"];
             /** @enum {string} */
             type: "tracks" | "videos";
-            meta: components["schemas"]["PlaylistItemsRelationshipReorderOperation_Payload_Data_Meta"];
         };
         PlaylistItemsRelationshipReorderOperation_Payload_Data_Meta: {
             itemId: string;
@@ -12401,319 +7754,679 @@ export interface components {
             data: components["schemas"]["PlaylistUpdateOperation_Payload_Data"];
         };
         PlaylistUpdateOperation_Payload_Data: {
+            attributes: components["schemas"]["PlaylistUpdateOperation_Payload_Data_Attributes"];
             id: string;
             /** @enum {string} */
             type: "playlists";
-            attributes: components["schemas"]["PlaylistUpdateOperation_Payload_Data_Attributes"];
         };
         PlaylistUpdateOperation_Payload_Data_Attributes: {
-            name?: string;
+            /**
+             * @description Access type
+             * @example PUBLIC
+             * @enum {string}
+             */
+            accessType?: "PUBLIC" | "UNLISTED";
             description?: string;
-            /** @enum {string} */
-            privacy?: "PUBLIC" | "PRIVATE";
+            name?: string;
         };
         Playlists_Attributes: {
-            /** @description Playlist name */
-            name: string;
-            /** @description Playlist description */
-            description?: string;
+            /**
+             * @description Access type
+             * @example PUBLIC
+             * @enum {string}
+             */
+            accessType: "PUBLIC" | "UNLISTED";
             /** @description Indicates if the playlist has a duration and set number of tracks */
             bounded: boolean;
-            /**
-             * @description Duration of the playlist expressed in accordance with ISO 8601
-             * @example P30M5S
-             */
-            duration?: string;
-            /**
-             * Format: int32
-             * @description Number of items in the playlist
-             */
-            numberOfItems?: number;
-            /** @description Sharing links to the playlist */
-            externalLinks: components["schemas"]["External_Link"][];
-            /** @description Images associated with the playlist */
-            imageLinks: components["schemas"]["Image_Link"][];
             /**
              * Format: date-time
              * @description Datetime of playlist creation (ISO 8601)
              */
             createdAt: string;
+            /** @description Playlist description */
+            description?: string;
+            /**
+             * @description Duration of playlist (ISO 8601)
+             * @example P30M5S
+             */
+            duration?: string;
+            externalLinks: components["schemas"]["External_Link"][];
             /**
              * Format: date-time
              * @description Datetime of last modification of the playlist (ISO 8601)
              */
             lastModifiedAt: string;
+            /** @description Playlist name */
+            name: string;
             /**
-             * @description Privacy setting of the playlist
-             * @enum {string}
+             * Format: int32
+             * @description Number of items in the playlist
              */
-            privacy: "PUBLIC" | "PRIVATE";
+            numberOfItems?: number;
             /**
              * @description The type of the playlist
              * @enum {string}
              */
             playlistType: "EDITORIAL" | "USER" | "MIX" | "ARTIST";
         };
-        Playlists_Items_Multi_Data_Relationship_Document: {
+        Playlists_Items_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Playlists_Items_Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
+            links: components["schemas"]["Links"];
         };
-        /** @description Resource identifier JSON:API object */
         Playlists_Items_Resource_Identifier: {
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            meta?: components["schemas"]["Playlists_Items_Resource_Identifier_Meta"];
             /**
-             * @description resource unique type
+             * @description Resource type
              * @example tracks
              */
             type: string;
-            meta?: components["schemas"]["Playlists_Items_Resource_Identifier_Meta"];
         };
         Playlists_Items_Resource_Identifier_Meta: {
-            itemId?: string;
             /** Format: date-time */
             addedAt?: string;
+            itemId?: string;
         };
-        Playlists_Multi_Data_Document: {
-            data?: components["schemas"]["Playlists_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Users_Resource"])[];
-        };
-        Playlists_Multi_Data_Relationship_Document: {
+        Playlists_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Users_Resource"] | components["schemas"]["Playlists_Resource"])[];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Playlists_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Playlists_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Playlists_Relationships: {
-            owners: components["schemas"]["Multi_Data_Relationship_Doc"];
-            items: components["schemas"]["Playlists_Items_Multi_Data_Relationship_Document"];
+            coverArt: components["schemas"]["Multi_Relationship_Data_Document"];
+            items: components["schemas"]["Playlists_Items_Multi_Relationship_Data_Document"];
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
         };
-        Playlists_Resource: {
+        Playlists_Resource_Object: {
             attributes?: components["schemas"]["Playlists_Attributes"];
-            relationships?: components["schemas"]["Playlists_Relationships"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            relationships?: components["schemas"]["Playlists_Relationships"];
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "playlists";
         };
-        Playlists_Single_Data_Document: {
-            data?: components["schemas"]["Playlists_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Tracks_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Users_Resource"])[];
-        };
-        /** @description Primary and Secondary color to visually render the pick */
-        Prompt_Colors: {
-            /**
-             * @description Primary color to visually render the pick
-             * @example #FF0000
-             */
-            primary: string;
-            /**
-             * @description Secondary color to visually render the pick
-             * @example #00FF00
-             */
-            secondary: string;
+        Playlists_Single_Resource_Data_Document: {
+            data: components["schemas"]["Playlists_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Providers_Attributes: {
             /**
-             * @description Provider name. Conditionally visible.
+             * @description Provider name
              * @example Columbia/Legacy
              */
             name: string;
         };
-        Providers_Multi_Data_Document: {
-            data?: components["schemas"]["Providers_Resource"][];
-            links?: components["schemas"]["Links"];
+        Providers_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Providers_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
-        Providers_Resource: {
+        Providers_Resource_Object: {
             attributes?: components["schemas"]["Providers_Attributes"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "providers";
         };
-        Providers_Single_Data_Document: {
-            data?: components["schemas"]["Providers_Resource"];
-            links?: components["schemas"]["Links"];
+        Providers_Single_Resource_Data_Document: {
+            data: components["schemas"]["Providers_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
-        ResourceObjectObject: {
-            attributes?: Record<string, never>;
-            relationships?: Record<string, never>;
-            links?: components["schemas"]["Links"];
-            /**
-             * @description resource unique identifier
-             * @example 12345
-             */
-            id: string;
-            /**
-             * @description resource unique type
-             * @example tracks
-             */
-            type: string;
-        };
-        /** @description Resource identifier JSON:API object */
         Resource_Identifier: {
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
             /**
-             * @description resource unique type
+             * @description Resource type
              * @example tracks
              */
             type: string;
         };
-        Searchresults_Attributes: {
+        Resource_ObjectObjectObject: {
+            attributes?: Record<string, never>;
             /**
-             * @description search request unique tracking number
-             * @example 5896e37d-e847-4ca6-9629-ef8001719f7f
+             * @description Resource id
+             * @example 12345
              */
-            trackingId: string;
+            id: string;
+            relationships?: Record<string, never>;
+            /**
+             * @description Resource type
+             * @example tracks
+             */
+            type: string;
+        };
+        SearchResults_Attributes: {
             /**
              * @description 'did you mean' prompt
              * @example beatles
              */
             didYouMean?: string;
-        };
-        Searchresults_Multi_Data_Document: {
-            data?: components["schemas"]["Searchresults_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Tracks_Resource"])[];
-        };
-        Searchresults_Multi_Data_Relationship_Document: {
-            data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Tracks_Resource"] | components["schemas"]["Searchresults_Resource"])[];
-        };
-        Searchresults_Relationships: {
-            albums: components["schemas"]["Multi_Data_Relationship_Doc"];
-            artists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            playlists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            videos: components["schemas"]["Multi_Data_Relationship_Doc"];
-            topHits: components["schemas"]["Multi_Data_Relationship_Doc"];
-            tracks: components["schemas"]["Multi_Data_Relationship_Doc"];
-        };
-        Searchresults_Resource: {
-            attributes?: components["schemas"]["Searchresults_Attributes"];
-            relationships?: components["schemas"]["Searchresults_Relationships"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description search request unique tracking number
+             * @example 5896e37d-e847-4ca6-9629-ef8001719f7f
+             */
+            trackingId: string;
+        };
+        SearchResults_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        SearchResults_Multi_Resource_Data_Document: {
+            data: components["schemas"]["SearchResults_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        SearchResults_Relationships: {
+            albums: components["schemas"]["Multi_Relationship_Data_Document"];
+            artists: components["schemas"]["Multi_Relationship_Data_Document"];
+            playlists: components["schemas"]["Multi_Relationship_Data_Document"];
+            topHits: components["schemas"]["Multi_Relationship_Data_Document"];
+            tracks: components["schemas"]["Multi_Relationship_Data_Document"];
+            videos: components["schemas"]["Multi_Relationship_Data_Document"];
+        };
+        SearchResults_Resource_Object: {
+            attributes?: components["schemas"]["SearchResults_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["SearchResults_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "searchResults";
+        };
+        SearchResults_Single_Resource_Data_Document: {
+            data: components["schemas"]["SearchResults_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        SearchSuggestions_Attributes: {
+            /** @description Suggestions from search history */
+            history?: components["schemas"]["SearchSuggestions_History"][];
+            /** @description Suggested search queries */
+            suggestions?: components["schemas"]["SearchSuggestions_Suggestions"][];
+            /** @description Unique tracking id */
+            trackingId: string;
+        };
+        SearchSuggestions_Highlights: {
+            /** Format: int32 */
+            length: number;
+            /** Format: int32 */
+            start: number;
+        };
+        /** @description Suggestions from search history */
+        SearchSuggestions_History: {
+            highlights?: components["schemas"]["SearchSuggestions_Highlights"][];
+            query: string;
+        };
+        SearchSuggestions_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        SearchSuggestions_Multi_Resource_Data_Document: {
+            data: components["schemas"]["SearchSuggestions_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        SearchSuggestions_Relationships: {
+            directHits: components["schemas"]["Multi_Relationship_Data_Document"];
+        };
+        SearchSuggestions_Resource_Object: {
+            attributes?: components["schemas"]["SearchSuggestions_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["SearchSuggestions_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "searchSuggestions";
+        };
+        SearchSuggestions_Single_Resource_Data_Document: {
+            data: components["schemas"]["SearchSuggestions_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        /** @description Suggested search queries */
+        SearchSuggestions_Suggestions: {
+            highlights?: components["schemas"]["SearchSuggestions_Highlights"][];
+            query: string;
+        };
+        Single_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"];
+            links: components["schemas"]["Links"];
+        };
+        TrackCreateOperation_Payload: {
+            data: components["schemas"]["TrackCreateOperation_Payload_Data"];
+        };
+        TrackCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["TrackCreateOperation_Payload_Data_Attributes"];
+            relationships: components["schemas"]["TrackCreateOperation_Payload_Data_Relationships"];
+            /** @enum {string} */
+            type: "tracks";
+        };
+        TrackCreateOperation_Payload_Data_Attributes: {
+            /**
+             * @description Access type
+             * @example PRIVATE
+             * @enum {string}
+             */
+            accessType: "PUBLIC" | "UNLISTED" | "PRIVATE";
+            /**
+             * @description Explicit content
+             * @example false
+             */
+            explicit?: boolean;
+            title: string;
+        };
+        TrackCreateOperation_Payload_Data_Relationships: {
+            albums: components["schemas"]["TrackCreateOperation_Payload_Data_Relationships_Albums"];
+            artists: components["schemas"]["TrackCreateOperation_Payload_Data_Relationships_Artists"];
+            genres?: components["schemas"]["TrackCreateOperation_Payload_Data_Relationships_Genres"];
+        };
+        TrackCreateOperation_Payload_Data_Relationships_Albums: {
+            data: components["schemas"]["TrackCreateOperation_Payload_Data_Relationships_Albums_Data"][];
+        };
+        TrackCreateOperation_Payload_Data_Relationships_Albums_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "albums";
+        };
+        TrackCreateOperation_Payload_Data_Relationships_Artists: {
+            data: components["schemas"]["TrackCreateOperation_Payload_Data_Relationships_Artists_Data"][];
+        };
+        TrackCreateOperation_Payload_Data_Relationships_Artists_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "artists";
+        };
+        TrackCreateOperation_Payload_Data_Relationships_Genres: {
+            data: components["schemas"]["TrackCreateOperation_Payload_Data_Relationships_Genres_Data"][];
+        };
+        TrackCreateOperation_Payload_Data_Relationships_Genres_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "genres";
+        };
+        TrackFiles_Attributes: {
+            albumAudioNormalizationData?: components["schemas"]["AudioNormalizationData"];
+            /**
+             * @description File's audio format
+             * @enum {string}
+             */
+            format?: "HEAACV1" | "AACLC" | "FLAC" | "FLAC_HIRES";
+            trackAudioNormalizationData?: components["schemas"]["AudioNormalizationData"];
+            /**
+             * @description Track presentation
+             * @enum {string}
+             */
+            trackPresentation?: "FULL" | "PREVIEW";
+            /** @description File URL */
+            url?: string;
+        };
+        TrackFiles_Multi_Resource_Data_Document: {
+            data: components["schemas"]["TrackFiles_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackFiles_Resource_Object: {
+            attributes?: components["schemas"]["TrackFiles_Attributes"];
+            /**
+             * @description Resource id
              * @example 12345
              */
             id: string;
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "trackFiles";
         };
-        Searchresults_Single_Data_Document: {
-            data?: components["schemas"]["Searchresults_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["Videos_Resource"] | components["schemas"]["Tracks_Resource"])[];
+        TrackFiles_Single_Resource_Data_Document: {
+            data: components["schemas"]["TrackFiles_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
-        Singleton_Data_Relationship_Doc: {
-            data?: components["schemas"]["Resource_Identifier"];
-            links?: components["schemas"]["Links"];
+        TrackManifests_Attributes: {
+            albumAudioNormalizationData?: components["schemas"]["AudioNormalizationData"];
+            drmData?: components["schemas"]["DrmData"];
+            /** @description Formats present in manifest */
+            formats?: ("HEAACV1" | "AACLC" | "FLAC" | "FLAC_HIRES")[];
+            /** @description Unique manifest hash */
+            hash?: string;
+            trackAudioNormalizationData?: components["schemas"]["AudioNormalizationData"];
+            /**
+             * @description Track presentation
+             * @enum {string}
+             */
+            trackPresentation?: "FULL" | "PREVIEW";
+            /** @description Manifest URI */
+            uri?: string;
+        };
+        TrackManifests_Multi_Resource_Data_Document: {
+            data: components["schemas"]["TrackManifests_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackManifests_Resource_Object: {
+            attributes?: components["schemas"]["TrackManifests_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "trackManifests";
+        };
+        TrackManifests_Single_Resource_Data_Document: {
+            data: components["schemas"]["TrackManifests_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackSourceFileCreateOperation_Payload: {
+            data: components["schemas"]["TrackSourceFileCreateOperation_Payload_Data"];
+        };
+        TrackSourceFileCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["TrackSourceFileCreateOperation_Payload_Data_Attributes"];
+            relationships: components["schemas"]["TrackSourceFileCreateOperation_Payload_Data_Relationships"];
+            /** @enum {string} */
+            type: "trackSourceFiles";
+        };
+        TrackSourceFileCreateOperation_Payload_Data_Attributes: {
+            md5Hash: string;
+            /** Format: int64 */
+            size: number;
+        };
+        TrackSourceFileCreateOperation_Payload_Data_Relationships: {
+            track: components["schemas"]["AttachSourceFileToTrack"];
+        };
+        TrackSourceFiles_Attributes: {
+            /** @description MD5 hash of file to be uploaded */
+            md5Hash: string;
+            /**
+             * Format: int64
+             * @description File size of the track in bytes
+             */
+            size: number;
+            status: components["schemas"]["File_Status"];
+            uploadLink: components["schemas"]["File_Upload_Link"];
+        };
+        TrackSourceFiles_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackSourceFiles_Multi_Resource_Data_Document: {
+            data: components["schemas"]["TrackSourceFiles_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackSourceFiles_Relationships: {
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+        };
+        TrackSourceFiles_Resource_Object: {
+            attributes?: components["schemas"]["TrackSourceFiles_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["TrackSourceFiles_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "trackSourceFiles";
+        };
+        TrackSourceFiles_Single_Resource_Data_Document: {
+            data: components["schemas"]["TrackSourceFiles_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackStatistics_Attributes: {
+            /**
+             * Format: int32
+             * @description Total playbacks
+             */
+            totalPlaybacks: number;
+            /**
+             * Format: int32
+             * @description Unique listeners
+             */
+            uniqueListeners: number;
+        };
+        TrackStatistics_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackStatistics_Multi_Resource_Data_Document: {
+            data: components["schemas"]["TrackStatistics_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackStatistics_Relationships: {
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+        };
+        TrackStatistics_Resource_Object: {
+            attributes?: components["schemas"]["TrackStatistics_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["TrackStatistics_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "trackStatistics";
+        };
+        TrackStatistics_Single_Resource_Data_Document: {
+            data: components["schemas"]["TrackStatistics_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        TrackUpdateOperation_Payload: {
+            data: components["schemas"]["TrackUpdateOperation_Payload_Data"];
+        };
+        TrackUpdateOperation_Payload_Data: {
+            attributes: components["schemas"]["TrackUpdateOperation_Payload_Data_Attributes"];
+            id: string;
+            relationships?: components["schemas"]["TrackUpdateOperation_Payload_Data_Relationships"];
+            /** @enum {string} */
+            type: "tracks";
+        };
+        TrackUpdateOperation_Payload_Data_Attributes: {
+            /**
+             * @description Access type
+             * @example PRIVATE
+             * @enum {string}
+             */
+            accessType?: "PUBLIC" | "UNLISTED" | "PRIVATE";
+            /** Format: float */
+            bpm?: number;
+            /**
+             * @description Explicit content
+             * @example false
+             */
+            explicit?: boolean;
+            /** @enum {string} */
+            key?: "UNKNOWN" | "C" | "CSharp" | "D" | "Eb" | "E" | "F" | "FSharp" | "G" | "Ab" | "A" | "Bb" | "B";
+            /** @enum {string} */
+            keyScale?: "UNKNOWN" | "MAJOR" | "MINOR" | "AEOLIAN" | "BLUES" | "DORIAN" | "HARMONIC_MINOR" | "LOCRIAN" | "LYDIAN" | "MIXOLYDIAN" | "PENTATONIC_MAJOR" | "PHRYGIAN" | "MELODIC_MINOR" | "PENTATONIC_MINOR";
+            title?: string;
+            toneTags?: string[];
+        };
+        TrackUpdateOperation_Payload_Data_Relationships: {
+            genres?: components["schemas"]["TrackUpdateOperation_Payload_Data_Relationships_Genres"];
+        };
+        TrackUpdateOperation_Payload_Data_Relationships_Genres: {
+            data: components["schemas"]["TrackUpdateOperation_Payload_Data_Relationships_Genres_Data"][];
+        };
+        TrackUpdateOperation_Payload_Data_Relationships_Genres_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "genres";
         };
         Tracks_Attributes: {
             /**
-             * @description Album item's title
-             * @example Kill Jay Z
+             * @description Access type
+             * @example PRIVATE
+             * @enum {string}
              */
-            title: string;
+            accessType?: "PUBLIC" | "UNLISTED" | "PRIVATE";
+            /** @description Available usage for this track */
+            availability?: ("STREAM" | "DJ" | "STEM")[];
             /**
-             * @description Version of the album's item; complements title
-             * @example Kill Jay Z
+             * Format: float
+             * @description Beats per minute
+             * @example 60
              */
-            version?: string;
+            bpm?: number;
             /**
-             * @description ISRC code
-             * @example TIDAL2274
-             */
-            isrc: string;
-            /**
-             * @description Duration expressed in accordance with ISO 8601
-             * @example P30M5S
-             */
-            duration: string;
-            /**
-             * @description Copyright information
+             * @description Copyright
              * @example (p)(c) 2017 S. CARTER ENTERPRISES, LLC. MARKETED BY ROC NATION & DISTRIBUTED BY ROC NATION/UMG RECORDINGS INC.
              */
             copyright?: string;
             /**
-             * @description Indicates whether a catalog item consist of any explicit content
+             * Format: date-time
+             * @description Datetime of track creation (ISO 8601)
+             */
+            createdAt?: string;
+            /**
+             * @description Duration (ISO 8601)
+             * @example PT2M58S
+             */
+            duration: string;
+            /**
+             * @description Explicit content
              * @example false
              */
             explicit: boolean;
+            /** @description Track links external to TIDAL API */
+            externalLinks?: components["schemas"]["External_Link"][];
+            /**
+             * @description International Standard Recording Code (ISRC)
+             * @example QMJMT1701229
+             */
+            isrc: string;
+            /**
+             * @description Key
+             * @enum {string}
+             */
+            key: "UNKNOWN" | "C" | "CSharp" | "D" | "Eb" | "E" | "F" | "FSharp" | "G" | "Ab" | "A" | "Bb" | "B";
+            /**
+             * @description The scale of the key
+             * @enum {string}
+             */
+            keyScale: "UNKNOWN" | "MAJOR" | "MINOR" | "AEOLIAN" | "BLUES" | "DORIAN" | "HARMONIC_MINOR" | "LOCRIAN" | "LYDIAN" | "MIXOLYDIAN" | "PENTATONIC_MAJOR" | "PHRYGIAN" | "MELODIC_MINOR" | "PENTATONIC_MINOR";
+            mediaTags: string[];
             /**
              * Format: double
-             * @description Track or video popularity (ranged in 0.00 ... 1.00). Conditionally visible
+             * @description Popularity (0.0 - 1.0)
              * @example 0.56
              */
             popularity: number;
-            /** @description Defines a catalog item availability e.g. for streaming, DJs, stems */
-            availability?: ("STREAM" | "DJ" | "STEM")[];
-            mediaTags: string[];
-            /** @description Represents available links to something that is related to a catalog item, but external to the TIDAL API */
-            externalLinks?: components["schemas"]["External_Link"][];
+            /**
+             * @description Is the track spotlighted?
+             * @example true
+             */
+            spotlighted?: boolean;
+            /**
+             * @description Track title
+             * @example Kill Jay Z
+             */
+            title: string;
+            toneTags?: string[];
+            /**
+             * @description Track version, complements title
+             * @example original, mix etc
+             */
+            version?: string;
         };
-        Tracks_Multi_Data_Document: {
-            data?: components["schemas"]["Tracks_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Tracks_Resource"] | components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Playlists_Resource"])[];
-        };
-        Tracks_Multi_Data_Relationship_Document: {
+        Tracks_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Tracks_Resource"] | components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Playlists_Resource"])[];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Tracks_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Tracks_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Tracks_Relationships: {
-            albums: components["schemas"]["Multi_Data_Relationship_Doc"];
-            artists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            similarTracks: components["schemas"]["Multi_Data_Relationship_Doc"];
-            providers: components["schemas"]["Multi_Data_Relationship_Doc"];
-            radio: components["schemas"]["Multi_Data_Relationship_Doc"];
+            albums: components["schemas"]["Multi_Relationship_Data_Document"];
+            artists: components["schemas"]["Multi_Relationship_Data_Document"];
+            genres: components["schemas"]["Multi_Relationship_Data_Document"];
+            lyrics: components["schemas"]["Multi_Relationship_Data_Document"];
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+            providers: components["schemas"]["Multi_Relationship_Data_Document"];
+            radio: components["schemas"]["Multi_Relationship_Data_Document"];
+            similarTracks: components["schemas"]["Multi_Relationship_Data_Document"];
+            sourceFile: components["schemas"]["Single_Relationship_Data_Document"];
+            trackStatistics: components["schemas"]["Single_Relationship_Data_Document"];
         };
-        Tracks_Resource: {
+        Tracks_Resource_Object: {
             attributes?: components["schemas"]["Tracks_Attributes"];
-            relationships?: components["schemas"]["Tracks_Relationships"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            relationships?: components["schemas"]["Tracks_Relationships"];
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "tracks";
         };
-        Tracks_Single_Data_Document: {
-            data?: components["schemas"]["Tracks_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Tracks_Resource"] | components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Playlists_Resource"])[];
+        Tracks_Single_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Tracks_Single_Resource_Data_Document: {
+            data: components["schemas"]["Tracks_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         UserCollectionAlbumsRelationshipAddOperation_Payload: {
             data: components["schemas"]["UserCollectionAlbumsRelationshipAddOperation_Payload_Data"][];
@@ -12728,9 +8441,9 @@ export interface components {
         };
         UserCollectionAlbumsRelationshipRemoveOperation_Payload_Data: {
             id: string;
+            meta: components["schemas"]["UserCollectionAlbumsRelationshipRemoveOperation_Payload_Data_Meta"];
             /** @enum {string} */
             type: "albums";
-            meta: components["schemas"]["UserCollectionAlbumsRelationshipRemoveOperation_Payload_Data_Meta"];
         };
         UserCollectionAlbumsRelationshipRemoveOperation_Payload_Data_Meta: {
             itemId: string;
@@ -12748,9 +8461,9 @@ export interface components {
         };
         UserCollectionArtistsRelationshipRemoveOperation_Payload_Data: {
             id: string;
+            meta: components["schemas"]["UserCollectionArtistsRelationshipRemoveOperation_Payload_Data_Meta"];
             /** @enum {string} */
             type: "artists";
-            meta: components["schemas"]["UserCollectionArtistsRelationshipRemoveOperation_Payload_Data_Meta"];
         };
         UserCollectionArtistsRelationshipRemoveOperation_Payload_Data_Meta: {
             itemId: string;
@@ -12766,250 +8479,228 @@ export interface components {
         UserCollectionPlaylistsRelationshipRemoveOperation_Payload_Data_Meta: {
             itemId: string;
         };
-        UserCollections_Attributes: Record<string, never>;
-        UserCollections_Multi_Data_Document: {
-            data?: components["schemas"]["UserCollections_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Playlists_Resource"])[];
+        UserCollections_Albums_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["UserCollections_Albums_Resource_Identifier"][];
+            links: components["schemas"]["Links"];
         };
-        UserCollections_Multi_Data_Relationship_Document: {
-            data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["UserCollections_Resource"])[];
-        };
-        UserCollections_Relationships: {
-            albums: components["schemas"]["Multi_Data_Relationship_Doc"];
-            artists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            playlists: components["schemas"]["Multi_Data_Relationship_Doc"];
-        };
-        UserCollections_Resource: {
-            attributes?: components["schemas"]["UserCollections_Attributes"];
-            relationships?: components["schemas"]["UserCollections_Relationships"];
-            links?: components["schemas"]["Links"];
+        UserCollections_Albums_Resource_Identifier: {
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            meta?: components["schemas"]["UserCollections_Albums_Resource_Identifier_Meta"];
             /**
-             * @description resource unique type
+             * @description Resource type
              * @example tracks
              */
             type: string;
         };
-        UserCollections_Single_Data_Document: {
-            data?: components["schemas"]["UserCollections_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Playlists_Resource"])[];
+        UserCollections_Albums_Resource_Identifier_Meta: {
+            /** Format: date-time */
+            addedAt?: string;
+            itemId?: string;
+        };
+        UserCollections_Artists_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["UserCollections_Artists_Resource_Identifier"][];
+            links: components["schemas"]["Links"];
+        };
+        UserCollections_Artists_Resource_Identifier: {
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            meta?: components["schemas"]["UserCollections_Artists_Resource_Identifier_Meta"];
+            /**
+             * @description Resource type
+             * @example tracks
+             */
+            type: string;
+        };
+        UserCollections_Artists_Resource_Identifier_Meta: {
+            /** Format: date-time */
+            addedAt?: string;
+            itemId?: string;
+        };
+        UserCollections_Attributes: Record<string, never>;
+        UserCollections_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["Resource_Identifier"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        UserCollections_Multi_Resource_Data_Document: {
+            data: components["schemas"]["UserCollections_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        UserCollections_Playlists_Multi_Relationship_Data_Document: {
+            data?: components["schemas"]["UserCollections_Playlists_Resource_Identifier"][];
+            links: components["schemas"]["Links"];
+        };
+        UserCollections_Playlists_Resource_Identifier: {
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            meta?: components["schemas"]["UserCollections_Playlists_Resource_Identifier_Meta"];
+            /**
+             * @description Resource type
+             * @example tracks
+             */
+            type: string;
+        };
+        UserCollections_Playlists_Resource_Identifier_Meta: {
+            /** Format: date-time */
+            addedAt?: string;
+            itemId?: string;
+        };
+        UserCollections_Relationships: {
+            albums: components["schemas"]["UserCollections_Albums_Multi_Relationship_Data_Document"];
+            artists: components["schemas"]["UserCollections_Artists_Multi_Relationship_Data_Document"];
+            owners: components["schemas"]["Multi_Relationship_Data_Document"];
+            playlists: components["schemas"]["UserCollections_Playlists_Multi_Relationship_Data_Document"];
+        };
+        UserCollections_Resource_Object: {
+            attributes?: components["schemas"]["UserCollections_Attributes"];
+            /**
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["UserCollections_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "userCollections";
+        };
+        UserCollections_Single_Resource_Data_Document: {
+            data: components["schemas"]["UserCollections_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         UserEntitlements_Attributes: {
             /** @description entitlements for user */
             entitlements: ("MUSIC" | "DJ")[];
         };
-        UserEntitlements_Multi_Data_Document: {
-            data?: components["schemas"]["UserEntitlements_Resource"][];
-            links?: components["schemas"]["Links"];
+        UserEntitlements_Multi_Resource_Data_Document: {
+            data: components["schemas"]["UserEntitlements_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
-        UserEntitlements_Resource: {
+        UserEntitlements_Resource_Object: {
             attributes?: components["schemas"]["UserEntitlements_Attributes"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
             /**
-             * @description resource unique type
-             * @example tracks
-             */
-            type: string;
-        };
-        UserEntitlements_Single_Data_Document: {
-            data?: components["schemas"]["UserEntitlements_Resource"];
-            links?: components["schemas"]["Links"];
-        };
-        UserPublicProfilePicks_Attributes: {
-            /**
-             * @description Pick title
-             * @example My favorite track on repeat
-             */
-            title: string;
-            /**
-             * @description Description of pick
-             * @example This is the track I listen to when I need to focus
-             */
-            description: string;
-            /**
-             * @description CatalogueResourceType for supported item for the pick
-             * @example TRACK
+             * @description Resource type (enum property replaced by openapi-typescript)
              * @enum {string}
              */
-            supportedContentType: "albums" | "artistRoles" | "artists" | "playlists" | "providers" | "searchresults" | "tracks" | "userCollections" | "userEntitlements" | "userPublicProfilePicks" | "userPublicProfiles" | "userRecommendations" | "users" | "videos";
-            colors: components["schemas"]["Prompt_Colors"];
-            /**
-             * Format: date-time
-             * @description Date of last modification of the pick (ISO 8601)
-             * @example 2021-08-31T12:00:00Z
-             */
-            lastModifiedAt?: string;
+            type: "userEntitlements";
         };
-        UserPublicProfilePicks_Multi_Data_Document: {
-            data?: components["schemas"]["UserPublicProfilePicks_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: components["schemas"]["UserPublicProfiles_Resource"][];
-        };
-        UserPublicProfilePicks_Relationships: {
-            userPublicProfile: components["schemas"]["Singleton_Data_Relationship_Doc"];
-            item: components["schemas"]["Singleton_Data_Relationship_Doc"];
-        };
-        UserPublicProfilePicks_Resource: {
-            attributes?: components["schemas"]["UserPublicProfilePicks_Attributes"];
-            relationships?: components["schemas"]["UserPublicProfilePicks_Relationships"];
-            links?: components["schemas"]["Links"];
-            /**
-             * @description resource unique identifier
-             * @example 12345
-             */
-            id: string;
-            /**
-             * @description resource unique type
-             * @example tracks
-             */
-            type: string;
-        };
-        UserPublicProfilePicks_Single_Data_Document: {
-            data?: components["schemas"]["UserPublicProfilePicks_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: components["schemas"]["UserPublicProfiles_Resource"][];
-        };
-        UserPublicProfilePicks_Singleton_Data_Relationship_Document: {
-            data?: components["schemas"]["Resource_Identifier"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["UserPublicProfiles_Resource"] | components["schemas"]["UserPublicProfilePicks_Resource"])[];
-        };
-        UserPublicProfiles_Attributes: {
-            /**
-             * @description A customizable handle for the user profile
-             * @example @johnSmith
-             */
-            handle?: string;
-            /**
-             * @description Public Name of the user profile
-             * @example JohnSmith
-             */
-            profileName?: string;
-            picture?: components["schemas"]["User_Public_Profiles_Attributes_Picture"];
-            color: string[];
-            /** @description ExternalLinks for the user's profile */
-            externalLinks?: components["schemas"]["User_Public_Profiles_External_Link"][];
-            /**
-             * Format: int32
-             * @description Number of followers for the user
-             * @example 32
-             */
-            numberOfFollowers?: number;
-            /**
-             * Format: int32
-             * @description Number of users the user follows
-             * @example 32
-             */
-            numberOfFollows?: number;
-        };
-        UserPublicProfiles_Multi_Data_Document: {
-            data?: components["schemas"]["UserPublicProfiles_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Users_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["UserPublicProfilePicks_Resource"] | components["schemas"]["Playlists_Resource"])[];
-        };
-        UserPublicProfiles_Multi_Data_Relationship_Document: {
-            data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Users_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["UserPublicProfilePicks_Resource"] | components["schemas"]["Playlists_Resource"] | components["schemas"]["UserPublicProfiles_Resource"])[];
-        };
-        UserPublicProfiles_Relationships: {
-            followers: components["schemas"]["Multi_Data_Relationship_Doc"];
-            following: components["schemas"]["Multi_Data_Relationship_Doc"];
-            publicPlaylists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            publicPicks: components["schemas"]["Multi_Data_Relationship_Doc"];
-        };
-        UserPublicProfiles_Resource: {
-            attributes?: components["schemas"]["UserPublicProfiles_Attributes"];
-            relationships?: components["schemas"]["UserPublicProfiles_Relationships"];
-            links?: components["schemas"]["Links"];
-            /**
-             * @description resource unique identifier
-             * @example 12345
-             */
-            id: string;
-            /**
-             * @description resource unique type
-             * @example tracks
-             */
-            type: string;
-        };
-        UserPublicProfiles_Single_Data_Document: {
-            data?: components["schemas"]["UserPublicProfiles_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Users_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["UserPublicProfilePicks_Resource"] | components["schemas"]["Playlists_Resource"])[];
+        UserEntitlements_Single_Resource_Data_Document: {
+            data: components["schemas"]["UserEntitlements_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         UserRecommendations_Attributes: Record<string, never>;
-        UserRecommendations_Multi_Data_Document: {
-            data?: components["schemas"]["UserRecommendations_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: components["schemas"]["Playlists_Resource"][];
-        };
-        UserRecommendations_Multi_Data_Relationship_Document: {
+        UserRecommendations_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Playlists_Resource"] | components["schemas"]["UserRecommendations_Resource"])[];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        UserRecommendations_Multi_Resource_Data_Document: {
+            data: components["schemas"]["UserRecommendations_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         UserRecommendations_Relationships: {
-            discoveryMixes: components["schemas"]["Multi_Data_Relationship_Doc"];
-            newArrivalMixes: components["schemas"]["Multi_Data_Relationship_Doc"];
-            myMixes: components["schemas"]["Multi_Data_Relationship_Doc"];
+            discoveryMixes: components["schemas"]["Multi_Relationship_Data_Document"];
+            myMixes: components["schemas"]["Multi_Relationship_Data_Document"];
+            newArrivalMixes: components["schemas"]["Multi_Relationship_Data_Document"];
         };
-        UserRecommendations_Resource: {
+        UserRecommendations_Resource_Object: {
             attributes?: components["schemas"]["UserRecommendations_Attributes"];
-            relationships?: components["schemas"]["UserRecommendations_Relationships"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
+             * @example 12345
+             */
+            id: string;
+            relationships?: components["schemas"]["UserRecommendations_Relationships"];
+            /**
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            type: "userRecommendations";
+        };
+        UserRecommendations_Single_Resource_Data_Document: {
+            data: components["schemas"]["UserRecommendations_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        UserReportCreateOperation_Payload: {
+            data: components["schemas"]["UserReportCreateOperation_Payload_Data"];
+        };
+        UserReportCreateOperation_Payload_Data: {
+            attributes: components["schemas"]["UserReportCreateOperation_Payload_Data_Attributes"];
+            relationships: components["schemas"]["UserReportsCreateOperation_Payload_Data_Relationships"];
+            /** @enum {string} */
+            type: "userReports";
+        };
+        UserReportCreateOperation_Payload_Data_Attributes: {
+            description: string;
+            /** @enum {string} */
+            reason: "SEXUAL_CONTENT_OR_NUDITY" | "VIOLENT_OR_DANGEROUS_CONTENT" | "HATEFUL_OR_ABUSIVE_CONTENT" | "HARASSMENT" | "PRIVACY_VIOLATION" | "SCAMS_OR_FRAUD" | "SPAM" | "COPYRIGHT_INFRINGEMENT" | "UNKNOWN";
+        };
+        UserReportsCreateOperation_Payload_Data_Relationships: {
+            reportedResources: components["schemas"]["UserReportsCreateOperation_Payload_Data_Relationships_ReportedResources"];
+        };
+        UserReportsCreateOperation_Payload_Data_Relationships_ReportedResources: {
+            data: components["schemas"]["UserReportsCreateOperation_Payload_Data_Relationships_ReportedResources_Data"][];
+        };
+        UserReportsCreateOperation_Payload_Data_Relationships_ReportedResources_Data: {
+            id: string;
+            /** @enum {string} */
+            type: "tracks" | "artists" | "playlists";
+        };
+        UserReports_Attributes: {
+            /** @description Description */
+            description: string;
+            /**
+             * @description Reason
+             * @enum {string}
+             */
+            reason: "SEXUAL_CONTENT_OR_NUDITY" | "VIOLENT_OR_DANGEROUS_CONTENT" | "HATEFUL_OR_ABUSIVE_CONTENT" | "HARASSMENT" | "PRIVACY_VIOLATION" | "SCAMS_OR_FRAUD" | "SPAM" | "COPYRIGHT_INFRINGEMENT" | "UNKNOWN";
+        };
+        UserReports_Multi_Resource_Data_Document: {
+            data: components["schemas"]["UserReports_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        UserReports_Resource_Object: {
+            attributes?: components["schemas"]["UserReports_Attributes"];
+            /**
+             * @description Resource id
              * @example 12345
              */
             id: string;
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "userReports";
         };
-        UserRecommendations_Single_Data_Document: {
-            data?: components["schemas"]["UserRecommendations_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: components["schemas"]["Playlists_Resource"][];
-        };
-        /** @description ImageLink to the users image */
-        User_Public_Profiles_Attributes_Picture: {
-            href: string;
-        };
-        User_Public_Profiles_External_Link: {
-            href: string;
-            meta: components["schemas"]["User_Public_Profiles_External_Link_Meta"];
-        };
-        User_Public_Profiles_External_Link_Meta: {
-            /**
-             * @description external link handle
-             * @example JohnSmith
-             */
-            handle: string;
-            /** @enum {string} */
-            type: "TIDAL_SHARING" | "TIDAL_AUTOPLAY_ANDROID" | "TIDAL_AUTOPLAY_IOS" | "TIDAL_AUTOPLAY_WEB" | "TWITTER" | "FACEBOOK" | "INSTAGRAM" | "TIKTOK" | "SNAPCHAT" | "HOMEPAGE";
+        UserReports_Single_Resource_Data_Document: {
+            data: components["schemas"]["UserReports_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Users_Attributes: {
-            /**
-             * @description user name
-             * @example username
-             */
-            username: string;
             /**
              * @description ISO 3166-1 alpha-2 country code
              * @example US
@@ -13035,74 +8726,71 @@ export interface components {
              * @example Rambo
              */
             lastName?: string;
-        };
-        Users_Multi_Data_Document: {
-            data?: components["schemas"]["Users_Resource"][];
-            links?: components["schemas"]["Links"];
-        };
-        Users_Resource: {
-            attributes?: components["schemas"]["Users_Attributes"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Users nostr public key
+             * @example e3fc3965800f9c729b483a2a7291f30e569fbf5ab91a6eef332f9e28a5e923dd
+             */
+            nostrPublicKey?: string;
+            /**
+             * @description user name
+             * @example username
+             */
+            username: string;
+        };
+        Users_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Users_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Users_Resource_Object: {
+            attributes?: components["schemas"]["Users_Attributes"];
+            /**
+             * @description Resource id
              * @example 12345
              */
             id: string;
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "users";
         };
-        Users_Single_Data_Document: {
-            data?: components["schemas"]["Users_Resource"];
-            links?: components["schemas"]["Links"];
-        };
-        Video_Link: {
-            href: string;
-            meta: components["schemas"]["Video_Link_Meta"];
-        };
-        /** @description metadata about a video */
-        Video_Link_Meta: {
-            /**
-             * Format: int32
-             * @description video width (in pixels)
-             * @example 80
-             */
-            width: number;
-            /**
-             * Format: int32
-             * @description video height (in pixels)
-             * @example 80
-             */
-            height: number;
+        Users_Single_Resource_Data_Document: {
+            data: components["schemas"]["Users_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Videos_Attributes: {
+            /** @description Available usage for this video */
+            availability?: ("STREAM" | "DJ" | "STEM")[];
             /**
-             * @description Album item's title
-             * @example Kill Jay Z
+             * @description Copyright
+             * @example (p)(c) 2017 S. CARTER ENTERPRISES, LLC. MARKETED BY ROC NATION & DISTRIBUTED BY ROC NATION/UMG RECORDINGS INC.
              */
-            title: string;
+            copyright?: string;
             /**
-             * @description Version of the album's item; complements title
-             * @example Kill Jay Z
+             * @description Duration (ISO 8601)
+             * @example PT2M58S
              */
-            version?: string;
+            duration: string;
             /**
-             * @description ISRC code
+             * @description Explicit content
+             * @example false
+             */
+            explicit: boolean;
+            /** @description Video links external to TIDAL API */
+            externalLinks?: components["schemas"]["External_Link"][];
+            /**
+             * @description International Standard Recording Code (ISRC)
              * @example TIDAL2274
              */
             isrc: string;
             /**
-             * @description Duration expressed in accordance with ISO 8601
-             * @example P30M5S
+             * Format: double
+             * @description Popularity (0.0 - 1.0)
+             * @example 0.56
              */
-            duration: string;
-            /**
-             * @description Copyright information
-             * @example (p)(c) 2017 S. CARTER ENTERPRISES, LLC. MARKETED BY ROC NATION & DISTRIBUTED BY ROC NATION/UMG RECORDINGS INC.
-             */
-            copyright?: string;
+            popularity: number;
             /**
              * Format: date
              * @description Release date (ISO-8601)
@@ -13110,60 +8798,123 @@ export interface components {
              */
             releaseDate?: string;
             /**
-             * @description Indicates whether a catalog item consist of any explicit content
-             * @example false
+             * @description Video title
+             * @example Kill Jay Z
              */
-            explicit: boolean;
+            title: string;
             /**
-             * Format: double
-             * @description Track or video popularity (ranged in 0.00 ... 1.00). Conditionally visible
-             * @example 0.56
+             * @description Video version, complements title
+             * @example original, mix etc
              */
-            popularity: number;
-            /** @description Defines a catalog item availability e.g. for streaming, DJs, stems */
-            availability?: ("STREAM" | "DJ" | "STEM")[];
-            /** @description Represents available links to, and metadata about, an album item images */
-            imageLinks?: components["schemas"]["Image_Link"][];
-            /** @description Represents available links to something that is related to a catalog item, but external to the TIDAL API */
-            externalLinks?: components["schemas"]["External_Link"][];
+            version?: string;
         };
-        Videos_Multi_Data_Document: {
-            data?: components["schemas"]["Videos_Resource"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Providers_Resource"])[];
-        };
-        Videos_Multi_Data_Relationship_Document: {
+        Videos_Multi_Relationship_Data_Document: {
             data?: components["schemas"]["Resource_Identifier"][];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Providers_Resource"] | components["schemas"]["Videos_Resource"])[];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
+        };
+        Videos_Multi_Resource_Data_Document: {
+            data: components["schemas"]["Videos_Resource_Object"][];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
         Videos_Relationships: {
-            albums: components["schemas"]["Multi_Data_Relationship_Doc"];
-            artists: components["schemas"]["Multi_Data_Relationship_Doc"];
-            providers: components["schemas"]["Multi_Data_Relationship_Doc"];
+            albums: components["schemas"]["Multi_Relationship_Data_Document"];
+            artists: components["schemas"]["Multi_Relationship_Data_Document"];
+            providers: components["schemas"]["Multi_Relationship_Data_Document"];
+            thumbnailArt: components["schemas"]["Multi_Relationship_Data_Document"];
         };
-        Videos_Resource: {
+        Videos_Resource_Object: {
             attributes?: components["schemas"]["Videos_Attributes"];
-            relationships?: components["schemas"]["Videos_Relationships"];
-            links?: components["schemas"]["Links"];
             /**
-             * @description resource unique identifier
+             * @description Resource id
              * @example 12345
              */
             id: string;
+            relationships?: components["schemas"]["Videos_Relationships"];
             /**
-             * @description resource unique type
-             * @example tracks
+             * @description Resource type (enum property replaced by openapi-typescript)
+             * @enum {string}
              */
-            type: string;
+            type: "videos";
         };
-        Videos_Single_Data_Document: {
-            data?: components["schemas"]["Videos_Resource"];
-            links?: components["schemas"]["Links"];
-            included?: (components["schemas"]["Albums_Resource"] | components["schemas"]["Artists_Resource"] | components["schemas"]["Providers_Resource"])[];
+        Videos_Single_Resource_Data_Document: {
+            data: components["schemas"]["Videos_Resource_Object"];
+            included?: components["schemas"]["Included"];
+            links: components["schemas"]["Links"];
         };
     };
-    responses: never;
+    responses: {
+        /** @description Bad request - The request could not be understood by the server due to malformed syntax or invalid parameters */
+        Bad_Request_Response: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /** @example {"errors":[{"code":"GENERIC_REQUEST_ERROR","detail":"The request contains validation errors"}]} */
+                "application/vnd.api+json": components["schemas"]["Errors_Document"];
+            };
+        };
+        /** @description Internal server error - The server encountered an unexpected condition that prevented it from fulfilling the request */
+        Internal_Server_Error_Response: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /** @example {"errors":[{"code":"INTERNAL_SERVER_ERROR","detail":"The service encountered an error"}]} */
+                "application/vnd.api+json": components["schemas"]["Errors_Document"];
+            };
+        };
+        /** @description Method not allowed - The request method is not allowed for the requested resource */
+        Method_Not_Allowed_Response: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /** @example {"errors":[{"code":"METHOD_NOT_ALLOWED","detail":"The resource doesnt support the requested HTTP method: POST"}]} */
+                "application/vnd.api+json": components["schemas"]["Errors_Document"];
+            };
+        };
+        /** @description Not acceptable - The requested resource is capable of generating only content not acceptable according to the Accept headers sent in the request */
+        Not_Acceptable_Response: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /** @example {"errors":[{"code":"NOT_ACCEPTABLE","detail":"Not acceptable response media type on client. Supported media types on server: application/vnd.api+json, application/json"}]} */
+                "application/vnd.api+json": components["schemas"]["Errors_Document"];
+            };
+        };
+        /** @description Not found - The requested resource could not be found */
+        Not_Found_Response: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /** @example {"errors":[{"code":"NOT_FOUND","detail":"The requested resource could not be found"}]} */
+                "application/vnd.api+json": components["schemas"]["Errors_Document"];
+            };
+        };
+        /** @description Too many requests - The user has sent too many requests in a given amount of time */
+        Too_Many_Requests_Response: {
+            headers: {
+                /** @description Time to wait before making a new request, in seconds. */
+                "Retry-After"?: number;
+                [name: string]: unknown;
+            };
+            content?: never;
+        };
+        /** @description Unsupported media type - The request entity has a media type which the server or resource does not support */
+        Unsupported_Media_Type_Response: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /** @example {"errors":[{"code":"UNSUPPORTED_MEDIA_TYPE","detail":"Unsupported request media type: application/xml. Expected media type format: application/vnd.api+json"}]} */
+                "application/vnd.api+json": components["schemas"]["Errors_Document"];
+            };
+        };
+    };
     parameters: never;
     requestBodies: never;
     headers: never;

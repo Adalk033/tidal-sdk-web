@@ -13,6 +13,7 @@ import {
   transformOutputType,
 } from '../internal/event-tracking/streaming-metrics/playback-statistics';
 import { load } from '../internal/handlers/load';
+import { getIsPostPaywall } from '../internal/helpers/get-is-post-paywall';
 import type { StreamInfo } from '../internal/helpers/manifest-parser';
 import { normalizeVolume } from '../internal/helpers/normalize-volume';
 import type { PlaybackInfo } from '../internal/helpers/playback-info-resolver';
@@ -249,29 +250,25 @@ export class BasePlayer {
   ) {
     const endTimestamp = trueTime.now();
 
-    PlayLog.commit({
-      events: [
-        PlayLog.playbackSession({
-          endAssetPosition,
-          endTimestamp,
-          streamingSessionId,
-        }),
-      ],
-    }).catch(console.error);
+    PlayLog.commit([
+      PlayLog.playbackSession({
+        endAssetPosition,
+        endTimestamp,
+        streamingSessionId,
+      }),
+    ]).catch(console.error);
 
-    StreamingMetrics.commit({
-      events: [
-        StreamingMetrics.playbackStatistics({
-          endReason: playbackStatisticsEndReason(endReason),
-          endTimestamp,
-          streamingSessionId,
-        }),
-        StreamingMetrics.streamingSessionEnd({
-          streamingSessionId,
-          timestamp: endTimestamp,
-        }),
-      ],
-    }).catch(console.error);
+    StreamingMetrics.commit([
+      StreamingMetrics.playbackStatistics({
+        endReason: playbackStatisticsEndReason(endReason),
+        endTimestamp,
+        streamingSessionId,
+      }),
+      StreamingMetrics.streamingSessionEnd({
+        streamingSessionId,
+        timestamp: endTimestamp,
+      }),
+    ]).catch(console.error);
   }
 
   eventTrackingStreamingStarted(streamingSessionId: string) {
@@ -360,7 +357,11 @@ export class BasePlayer {
       actualQuality:
         playbackContext.actualAudioQuality ||
         playbackContext.actualVideoQuality,
-      isPostPaywall: playbackContext.actualAssetPresentation === 'FULL',
+      extras: mediaProduct.extras,
+      isPostPaywall: getIsPostPaywall(
+        playbackContext.actualAssetPresentation,
+        mediaProduct,
+      ),
       playbackSessionId: streamingSessionId,
       productType: PlayLog.mapProductTypeToPlayLogProductType(
         mediaProduct.productType,
