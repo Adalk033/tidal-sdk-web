@@ -42,8 +42,6 @@ function responseURIToCDMType(uri: string) {
   switch (lastPath) {
     case 'fairplay':
       return 'FAIR_PLAY';
-    case 'playready':
-      return 'PLAY_READY';
     case 'widevine':
       return 'WIDEVINE';
     default:
@@ -294,16 +292,6 @@ export default class ShakaPlayer extends BasePlayer {
           },
         },
       });
-    } else if (supportResult.drm['com.microsoft.playready']) {
-      this.debugLog('Configuring playready DRM.');
-
-      player.configure({
-        drm: {
-          servers: {
-            'com.microsoft.playready': `${apiUrl}/drm/licenses/playready?token=${clientId}`,
-          },
-        },
-      });
     } else if (supportResult.drm['com.apple.fps.1_0']) {
       this.debugLog('Configuring fairplay DRM.');
 
@@ -455,25 +443,7 @@ export default class ShakaPlayer extends BasePlayer {
           }
         }
 
-        // Manipulate manifest and segment requests that are sent to
-        // fsu.fa.tidal.com or ugcf.fa.tidal.com
-        const isRequestToFsuOrUgcf =
-          Array.isArray(request.uris) &&
-          request.uris.find(
-            (uri: string) =>
-              uri.startsWith('https://fsu.fa.tidal.com') ||
-              uri.startsWith('https://ugcf.fa.tidal.com'),
-          );
-
-        const demoContent =
-          isRequestToFsuOrUgcf &&
-          (type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-            type === shaka.net.NetworkingEngine.RequestType.SEGMENT);
-
-        if (
-          demoContent ||
-          type === shaka.net.NetworkingEngine.RequestType.LICENSE
-        ) {
+        if (type === shaka.net.NetworkingEngine.RequestType.LICENSE) {
           const { token } =
             await credentialsProviderStore.credentialsProvider.getCredentials();
 
